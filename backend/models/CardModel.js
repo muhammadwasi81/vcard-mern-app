@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const userSchema = mongoose.Schema(
+const cardSchema = mongoose.Schema(
   {
     name: {
       type: String,
@@ -11,9 +11,14 @@ const userSchema = mongoose.Schema(
       required: [true, 'Please add an email'],
       unique: true,
     },
-    password: {
+    telephone: {
       type: String,
-      required: [true, 'Please add a password'],
+      required: [true, 'Please add a phone number'],
+    },
+    qrCode: {
+      type: String,
+      required: [true, 'Please add a QR code'],
+      unique: true,
     },
   },
   {
@@ -21,4 +26,4 @@ const userSchema = mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('Card', cardSchema);

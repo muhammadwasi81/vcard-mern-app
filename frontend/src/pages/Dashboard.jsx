@@ -4,18 +4,18 @@ import { useSelector, useDispatch } from 'react-redux';
 import GoalForm from '../components/GoalForm';
 import GoalItem from '../components/GoalItem';
 import Spinner from '../components/Spinner';
-import { getGoals, reset } from '../features/goals/goalSlice';
-import VCard from '../components/VCard';
+// import VCard from '../components/VCard';
+import { getCards, reset } from '../features/cards/cardSlice';
 
 function Dashboard() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const { user } = useSelector((state) => state.auth);
-  const { goals, isLoading, isError, message } = useSelector(
-    (state) => state.goals
+  const { cards, isLoading, isError, message } = useSelector(
+    (state) => state.cards
   );
-  console.log('goals', goals);
+  console.log('cards', cards);
   useEffect(() => {
     if (isError) {
       console.log(message);
@@ -25,7 +25,7 @@ function Dashboard() {
       navigate('/login');
     }
 
-    dispatch(getGoals());
+    dispatch(getCards());
 
     return () => {
       dispatch(reset());
@@ -42,17 +42,10 @@ function Dashboard() {
         <p>Card Dashboard</p>
       </section>
       <GoalForm />
-      <section className="content">
-        {goals.length > 0 ? (
-          <div className="goals">
-            {goals.map((user) => (
-              <GoalItem key={user._id} user={user} />
-            ))}
-          </div>
-        ) : (
-          <h3>You have not set any card</h3>
-        )}
-        {/* <VCard /> */}
+      <section className="goals">
+        {cards?.map((card) => (
+          <GoalItem key={card._id} user={card} />
+        ))}
       </section>
     </>
   );

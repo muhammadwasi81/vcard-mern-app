@@ -191,6 +191,10 @@ h3 {
   animation: spin 1.2s linear infinite;
 }
 
+.btn-primary {
+  margin: 0 auto;
+  margin-top: 20px;
+}
 @keyframes spin {
   0% {
     transform: rotate(0deg);

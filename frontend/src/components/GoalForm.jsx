@@ -1,17 +1,42 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { createGoal } from '../features/goals/goalSlice';
+import { createCard } from '../features/cards/cardSlice';
+import QRCode from 'qrcode.react';
+import { toast } from 'react-toastify';
 
 function GoalForm() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-
+  const [qrCodeData, setQrCodeData] = useState('');
   const dispatch = useDispatch();
+
+  // const handleDownload = () => {
+  //   const url = `https://windoe.link/${name}`;
+  //   const vcard = `BEGIN:VCARD\nVERSION:3.0\nN:${name}\nTEL:${phone}\nEMAIL:${email}\nURL:${url}\nEND:VCARD`;
+  //   const blob = new Blob([vcard], { type: 'text/vcard' });
+  //   const link = document.createElement('a');
+  //   link.href = window.URL.createObjectURL(blob);
+  //   link.download = `${name}.vcf`;
+  //   link.click();
+  // };
+
+  useEffect(() => {
+    async function generateQRCode() {
+      const qrData = await QRCode.toDataURL(
+        JSON.stringify({ name, email, phone })
+      );
+      setQrCodeData(qrData);
+    }
+    generateQRCode();
+  }, [name, email, phone]);
 
   const onSubmit = (e) => {
     e.preventDefault();
-    dispatch(createGoal({ name, email, phone }));
+    if (!name || !email || !phone) {
+      return toast.error('Please fill in all fields');
+    }
+    dispatch(createCard({ name, email, telephone: phone }, qrCodeData));
     setName('');
     setEmail('');
     setPhone('');
@@ -51,6 +76,21 @@ function GoalForm() {
             onChange={(e) => setPhone(e.target.value)}
           />
         </div>
+        {/* <div>
+          <button className="btn btn-primary" onClick={handleDownload}>
+            Download vCard
+          </button>
+          <br />
+          <p>Scan this QR code with your mobile device to save the contact:</p>
+          <QRCode
+            value={`BEGIN:VCARD\nVERSION:3.0\nN:${name}\nTEL:${phone}\nEMAIL:${email}\nEND:VCARD`}
+            className="m-auto"
+          />
+          <p>
+            On most devices, you can tap and hold the QR code to bring up a menu
+            that will allow you to save the contact.
+          </p>
+        </div> */}
         <div className="form-group">
           <button className="btn btn-block" type="submit">
             Add Card
