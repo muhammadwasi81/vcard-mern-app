@@ -16,10 +16,9 @@ function GoalForm() {
   const [instagram, setInstagram] = useState("");
   const [linkedin, setLinkedin] = useState("");
   const [uploading, setUploading] = useState(false);
-  const [image, setImage] = useState({ preview: "", data: "" });
-  const [status, setStatus] = useState("");
+  const [image, setImage] = useState("");
+  const [previewImg, setPreviewImg] = useState("");
 
-  console.log(image.data, "image frontend");
   const createPayload = () => {
     const payloadData = {
       name,
@@ -30,7 +29,7 @@ function GoalForm() {
       snapchat,
       instagram,
       linkedin,
-      image: image.data,
+      image: `/images/${image}`,
     };
     console.log(payloadData, "payloadData");
     return payloadData;
@@ -49,88 +48,47 @@ function GoalForm() {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    try {
-      if (entities.some((entity) => entity === "")) {
-        return toast.error("Please fill in all fields");
-      }
-      const payload = createPayload();
-      dispatch(createCard(payload));
-      setName("");
-      setEmail("");
-      setPhone("");
-      setBirthday("");
-      setWebsite("");
-      setSnapchat("");
-      setInstagram("");
-      setLinkedin("");
-      setImage("");
-    } catch (error) {
-      console.log(error);
+    if (entities.some((entity) => entity === "")) {
+      return toast.error("Please fill in all fields");
     }
+    const payload = createPayload();
+    dispatch(createCard(payload));
+    setName("");
+    setEmail("");
+    setPhone("");
+    setBirthday("");
+    setWebsite("");
+    setSnapchat("");
+    setInstagram("");
+    setLinkedin("");
+    setImage("");
   };
 
-  // const handleFileChange = async (e) => {
-  //   const formData = new FormData();
-  //   formData.append("file", e.target.files[0]);
-  //   formData.append("filename", e.target.files[0].name);
-  //   try {
-  //     setUploading(true);
-  //     const response = await axios.post(`/api/upload`, formData, {
-  //       headers: {
-  //         "Content-Type": "multipart/form-data",
-  //       },
-  //     });
-  //     if (response.status === 200) {
-  //       setStatus(response.data);
-  //       setUploading(false);
-  //       console.log(`File uploaded successfully`);
-  //     } else {
-  //       console.log(`Error uploaded successfully`);
-  //       setStatus(response.status);
-  //       setUploading(false);
-  //     }
-  //   } catch (error) {
-  //     console.log(`Error uploading file: ${error}`, { cause: error });
-  //   }
-  //   const previewImg = {
-  //     preview: URL.createObjectURL(e.target.files[0]),
-  //     data: e.target.files[0],
-  //   };
-  //   setImage(previewImg);
-  // };
-
-  const handleFileChange = async (e) => {
+  const uploadFileHandler = async (e) => {
     const formData = new FormData();
-    const file = e.target.files[0];
-    const blob = new Blob([file], { type: file.type });
-    formData.append("file", blob, file.name);
-    formData.append("filename", file.name);
+    const files = e.target.files[0];
+    formData.append("file", files);
+    formData.append("filename", e.target.files[0].name);
+    console.log(formData, "formData");
+    setUploading(true);
     try {
-      setUploading(true);
-      const response = await axios.post(`/api/upload`, formData, {
+      const { data } = await axios.post(`/api/upload`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      if (response.status === 200) {
-        setStatus(response.data);
-        setUploading(false);
-        console.log(`File uploaded successfully`);
-      } else {
-        console.log(`Error uploaded successfully`);
-        setStatus(response.status);
-        setUploading(false);
-      }
+      console.log(data, "data");
+      setImage(data.filename);
+      setUploading(false);
+      setPreviewImg({
+        preview: URL.createObjectURL(files),
+        data: files,
+      });
     } catch (error) {
-      console.log(`Error uploading file: ${error}`, { cause: error });
+      console.error(error);
+      setUploading(false);
     }
-    const previewImg = {
-      preview: URL.createObjectURL(file),
-      data: file,
-    };
-    setImage(previewImg);
   };
-
   return (
     <section className="form">
       <form onSubmit={onSubmit}>
@@ -140,11 +98,11 @@ function GoalForm() {
             type="file"
             className="form-control"
             name="file"
-            onChange={handleFileChange}
+            onChange={uploadFileHandler}
           />
           {uploading && <Spinner />}
-          {image.preview && (
-            <img src={image.preview} width="100" height="100" alt="#" />
+          {previewImg && (
+            <img src={previewImg.preview} width="100" height="100" alt="#" />
           )}
         </div>
         <div className="form-group">

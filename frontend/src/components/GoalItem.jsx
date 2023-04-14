@@ -85,7 +85,7 @@ import QRCode from "qrcode.react";
 import moment from "moment";
 
 function GoalItem({ user }) {
-  // console.log("user", user);
+  console.log("user", user);
   const dispatch = useDispatch();
 
   const handleDownload = () => {
@@ -124,8 +124,8 @@ function GoalItem({ user }) {
         {moment(user?.birthday).format("MM/DD/YYYY")}
       </div>
       <img
-        src={user?.image}
-        alt={user?.name}
+        src={user.image}
+        alt={user.name}
         className="m-auto"
         style={{ width: "50px", height: "50px", borderRadius: "50%" }}
       />

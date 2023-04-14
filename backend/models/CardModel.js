@@ -16,8 +16,7 @@ const cardSchema = mongoose.Schema(
       required: [true, "Please add a phone number"],
     },
     image: {
-      data: Buffer,
-      contentType: String,
+      type: String,
       required: false,
     },
     birthday: {

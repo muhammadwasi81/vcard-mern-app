@@ -34,7 +34,8 @@ const createCard = asyncHandler(async (req, res) => {
     !website ||
     !snapchat ||
     !instagram ||
-    !linkedin
+    !linkedin ||
+    !image
   ) {
     res.status(400);
     throw new Error("Please fill out all fields");
