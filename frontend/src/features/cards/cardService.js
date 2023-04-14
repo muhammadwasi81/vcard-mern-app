@@ -1,6 +1,6 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_URL = '/api/cards/';
+const API_URL = "/api/cards/";
 
 // Create a new card
 const createCard = async (cardData, token) => {
@@ -11,10 +11,9 @@ const createCard = async (cardData, token) => {
   };
   try {
     const response = await axios.post(API_URL, cardData, config);
-    console.log(response.data, 'createCard');
     return response.data;
   } catch (err) {
-    console.log(err);
+    console.log(err.message);
   }
 };
 

@@ -1,11 +1,11 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import cardService from './cardService';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import cardService from "./cardService";
 
 /// Create new goal
 export const createCard = createAsyncThunk(
-  'goals/create',
+  "goals/create",
   async (cardData, thunkAPI) => {
-    console.log('goalData', cardData);
+    console.log("goalData", cardData);
     try {
       const token = thunkAPI.getState().auth.user.token;
       return await cardService.createCard(cardData, token);
@@ -23,7 +23,7 @@ export const createCard = createAsyncThunk(
 
 // Get user goals
 export const getCards = createAsyncThunk(
-  'goals/getAll',
+  "goals/getAll",
   async (_, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token;
@@ -42,7 +42,7 @@ export const getCards = createAsyncThunk(
 
 // Delete user goal
 export const deleteCardById = createAsyncThunk(
-  'goals/delete',
+  "goals/delete",
   async (id, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token;
@@ -61,7 +61,7 @@ export const deleteCardById = createAsyncThunk(
 
 // Update user goal
 export const updateCardById = createAsyncThunk(
-  'goals/update',
+  "goals/update",
   async (goalData, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token;
@@ -83,105 +83,90 @@ const initialState = {
   isLoading: false,
   isError: false,
   isSuccess: false,
-  message: '',
+  message: "",
 };
 
 const cardSlice = createSlice({
-  name: 'cards',
+  name: "cards",
   initialState,
   reducers: {
     reset: (state) => {
       state.isLoading = false;
       state.isSuccess = false;
       state.isError = false;
-      state.message = '';
+      state.message = "";
     },
   },
   extraReducers: (builder) => {
-    // Get cards
     builder.addCase(getCards.pending, (state) => {
       state.isLoading = true;
       state.isError = false;
       state.isSuccess = false;
     });
-    builder.addCase(getCards.fulfilled, (state, action) => {
-      console.log('getCards slice', action.payload);
-      state.isLoading = false;
-      state.isError = false;
-      state.isSuccess = true;
-      state.cards = action.payload;
-    });
-    builder.addCase(getCards.rejected, (state, { payload }) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.isSuccess = false;
-      state.message = payload;
-    });
-
-    // Create a new card
-    builder.addCase(createCard.pending, (state) => {
-      state.isLoading = true;
-      state.isError = false;
-      state.isSuccess = false;
-    });
-    builder.addCase(createCard.fulfilled, (state, action) => {
-      console.log('createCard slice', action.payload);
-      state.isLoading = false;
-      state.isError = false;
-      state.isSuccess = true;
-      state.cards.push(action.payload);
-    });
-    builder.addCase(createCard.rejected, (state, { payload }) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.isSuccess = false;
-      state.message = payload;
-    });
-
-    // Get a card by id
-    // builder.addCase(getCardById.pending, (state) => {
-    //   state.isLoading = true;
-    //   state.isError = false;
-    //   state.isSuccess = false;
-    // });
-    // builder.addCase(getCardById.fulfilled, (state, { payload }) => {
-    //   console.log('getCardById slice', payload);
-    //   state.isLoading = false;
-    //   state.isError = false;
-    //   state.isSuccess = true;
-    //   state.card = payload;
-    // });
-    // builder.addCase(getCardById.rejected, (state, { payload }) => {
-    //   state.isLoading = false;
-    //   state.isError = true;
-    //   state.isSuccess = false;
-    //   state.message = payload;
-    // });
-
-    // Update a card by id
-    builder.addCase(updateCardById.pending, (state) => {
-      state.isLoading = true;
-      state.isError = false;
-      state.isSuccess = false;
-    });
-    builder.addCase(updateCardById.fulfilled, (state, { payload }) => {
-      console.log('updateCardById slice', payload);
-      state.isLoading = false;
-      state.isError = false;
-      state.isSuccess = true;
-      state.card = payload;
-    });
-    builder.addCase(updateCardById.rejected, (state, { payload }) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.isSuccess = false;
-      state.message = payload;
-    });
-    builder.addCase(deleteCardById.pending, (state) => {
-      state.isLoading = true;
-      state.isError = false;
-      state.isSuccess = false;
-    });
+    builder
+      .addCase(getCards.fulfilled, (state, action) => {
+        console.log("getCards slice", action.payload);
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.cards = action.payload;
+      })
+      .addCase(getCards.rejected, (state, { payload }) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = payload;
+      })
+      .addCase(createCard.pending, (state) => {
+        state.isLoading = true;
+        state.isError = false;
+        state.isSuccess = false;
+      })
+      .addCase(createCard.fulfilled, (state, action) => {
+        console.log("createCard fulfilled", action.payload);
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.cards.push(action.payload);
+      })
+      .addCase(createCard.rejected, (state, action) => {
+        console.log("rejected card", action.payload);
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      .addCase(updateCardById.pending, (state) => {
+        state.isLoading = true;
+        state.isError = false;
+        state.isSuccess = false;
+      })
+      .addCase(updateCardById.fulfilled, (state, { payload }) => {
+        console.log("updateCardById slice", payload);
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.card = payload;
+      })
+      .addCase(updateCardById.rejected, (state, { payload }) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = payload;
+      })
+      .addCase(deleteCardById.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteCardById.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.cards = state.cards.filter(
+          (card) => card.id !== action.payload.id
+        );
+      })
+      .addCase(deleteCardById.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      });
   },
 });
 
