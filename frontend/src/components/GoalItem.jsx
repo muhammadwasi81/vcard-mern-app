@@ -28,7 +28,7 @@ function GoalItem({ user }) {
       image: updatedUser.image,
     };
     console.log(user._id, payload, "payload");
-    dispatch(updateCardById(user._id, payload));
+    dispatch(updateCardById({ payload }));
     setEditMode(false);
   };
 

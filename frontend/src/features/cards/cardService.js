@@ -57,7 +57,7 @@ const updateCardById = async (id, cardData, token) => {
     },
   };
   try {
-    const response = await axios.put(API_URL + id, cardData);
+    const response = await axios.put(API_URL + id, cardData, config);
     console.log(response.data, "update service");
     return response.data;
   } catch (err) {

@@ -66,8 +66,28 @@ const createCard = asyncHandler(async (req, res) => {
 // @route   PUT /api/cards/:id
 // @access  Private
 const updateCard = asyncHandler(async (req, res) => {
-  const { name, email, telephone, qrCode } = req.body;
-  if (!name || !email || !telephone) {
+  const {
+    name,
+    email,
+    telephone,
+    image,
+    birthday,
+    website,
+    snapchat,
+    instagram,
+    linkedin,
+  } = req.body;
+  if (
+    !name ||
+    !email ||
+    !telephone ||
+    !image ||
+    !birthday ||
+    !website ||
+    !snapchat ||
+    !instagram ||
+    !linkedin
+  ) {
     res.status(400);
     throw new Error("Please fill out all fields");
   }
@@ -76,7 +96,13 @@ const updateCard = asyncHandler(async (req, res) => {
     card.name = name;
     card.email = email;
     card.telephone = telephone;
-    card.qrCode = qrCode;
+    card.image = image;
+    card.birthday = birthday;
+    card.website = website;
+    card.snapchat = snapchat;
+    card.instagram = instagram;
+    card.linkedin = linkedin;
+
     const updatedCard = await card.save();
     console.log(updatedCard, "updateCard");
     res.status(200).json(updatedCard);
