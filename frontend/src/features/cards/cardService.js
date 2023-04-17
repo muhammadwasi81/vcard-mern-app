@@ -49,13 +49,16 @@ const getCardById = async (id, token) => {
 
 // Update a card by id
 const updateCardById = async (id, cardData, token) => {
+  console.log(id, "id in service");
+  console.log(cardData, "cardData in service");
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
   try {
-    const response = await axios.put(API_URL + id, cardData, config);
+    const response = await axios.put(API_URL + id, cardData);
+    console.log(response.data, "update service");
     return response.data;
   } catch (err) {
     console.log(err);

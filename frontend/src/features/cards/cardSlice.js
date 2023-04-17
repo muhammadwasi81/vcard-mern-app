@@ -62,10 +62,14 @@ export const deleteCardById = createAsyncThunk(
 // Update user goal
 export const updateCardById = createAsyncThunk(
   "goals/update",
-  async (goalData, thunkAPI) => {
+  async ({ id, data }, thunkAPI) => {
+    console.log(id, "update action");
+    console.log(data, "update action");
     try {
-      const token = thunkAPI.getState().auth.user.token;
-      return await cardService.updateCardById(goalData.id, goalData, token);
+      // const token = thunkAPI.getState().auth.user.token;
+      const res = await cardService.updateCardById(id, data);
+      console.log(res.data, "updateCardByIdAction");
+      return res.data;
     } catch (error) {
       const message =
         (error.response &&
@@ -77,6 +81,7 @@ export const updateCardById = createAsyncThunk(
     }
   }
 );
+
 const initialState = {
   cards: [],
   card: {},
@@ -140,17 +145,19 @@ const cardSlice = createSlice({
         state.isError = false;
         state.isSuccess = false;
       })
-      .addCase(updateCardById.fulfilled, (state, { payload }) => {
-        console.log("updateCardById slice", payload);
+      .addCase(updateCardById.fulfilled, (state, action) => {
+        console.log("updateCardById slice", action.payload);
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
-        state.card = payload;
+        state.cards = state.cards.map((card) =>
+          card._id === action.payload.id ? action.payload : card
+        );
       })
-      .addCase(updateCardById.rejected, (state, { payload }) => {
+      .addCase(updateCardById.rejected, (state, action) => {
+        console.log(action.payload, "rejected");
         state.isLoading = false;
         state.isError = true;
-        state.message = payload;
       })
       .addCase(deleteCardById.pending, (state, action) => {
         state.isLoading = true;
