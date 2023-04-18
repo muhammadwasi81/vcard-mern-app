@@ -3,18 +3,47 @@ import { deleteCardById, updateCardById } from "../features/cards/cardSlice";
 import QRCode from "qrcode.react";
 import moment from "moment";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 function GoalItem({ user }) {
   const dispatch = useDispatch();
   const [editMode, setEditMode] = useState(false);
   const [updatedUser, setUpdateUser] = useState(user);
+  const [qrCodeData, setQrCodeData] = useState(
+    `BEGIN:VCARD\nVERSION:3.0\nN:${user.name}\nTEL:${user.telephone}\nEMAIL:${
+      user.email
+    }\nURL:${user.website}\nBDAY:${new Date(user.birthday)
+      .toISOString()
+      .substring(0, 10)}\nPHOTO;TYPE=JPEG;VALUE=URL:${
+      user.image
+    }\nX-SOCIALPROFILE;TYPE=linkedin:https://www.linkedin.com/in/${
+      user.linkedin
+    }\nX-SOCIALPROFILE;TYPE=instagram:https://www.instagram.com/${
+      user.instagram
+    }\nX-SOCIALPROFILE;TYPE=snapchat:https://www.snapchat.com/add/${
+      user.snapchat
+    }\nEND:VCARD`
+  );
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUpdateUser((prevUser) => ({ ...prevUser, [name]: value }));
+    if (name === "name" || name === "email") {
+      setQrCodeData((prevData) => {
+        const newData = prevData.replace(
+          new RegExp(`${name.toUpperCase()}:.+\\n`),
+          `${name.toUpperCase()}:${value}\\n`
+        );
+        return newData;
+      });
+    }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (updatedUser.name !== user.name || updatedUser.email !== user.email) {
+      return toast.error("Name and Email cannot be changed");
+    }
     const payload = {
       id: updatedUser._id,
       name: updatedUser.name,
@@ -27,7 +56,6 @@ function GoalItem({ user }) {
       linkedin: updatedUser.linkedin,
       image: updatedUser.image,
     };
-    console.log(user._id, payload, "payload");
     dispatch(updateCardById({ payload }));
     setEditMode(false);
   };
@@ -161,21 +189,7 @@ function GoalItem({ user }) {
         <QRCode
           size={256}
           className="m-auto w-75 h-75"
-          value={`BEGIN:VCARD\nVERSION:3.0\nN:${user.name}\nTEL:${
-            user.telephone
-          }\nEMAIL:${user.email}\nURL:${user.website}\nBDAY:${new Date(
-            user.birthday
-          )
-            .toISOString()
-            .substring(0, 10)}\nPHOTO;TYPE=JPEG;VALUE=URL:${
-            user.image
-          }\nX-SOCIALPROFILE;TYPE=linkedin:https://www.linkedin.com/in/${
-            user.linkedin
-          }\nX-SOCIALPROFILE;TYPE=instagram:https://www.instagram.com/${
-            user.instagram
-          }\nX-SOCIALPROFILE;TYPE=snapchat:https://www.snapchat.com/add/${
-            user.snapchat
-          }\nEND:VCARD`}
+          value={"https://vcard-app.onrender.com"}
         />
 
         <button className="btn btn-primary" onClick={handleDownload}>

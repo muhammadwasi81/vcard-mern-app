@@ -5,7 +5,6 @@ import cardService from "./cardService";
 export const createCard = createAsyncThunk(
   "goals/create",
   async (cardData, thunkAPI) => {
-    console.log("goalData", cardData);
     try {
       const token = thunkAPI.getState().auth.user.token;
       return await cardService.createCard(cardData, token);
@@ -106,7 +105,6 @@ const cardSlice = createSlice({
     });
     builder
       .addCase(getCards.fulfilled, (state, action) => {
-        console.log("getCards slice", action.payload);
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
@@ -124,14 +122,12 @@ const cardSlice = createSlice({
         state.isSuccess = false;
       })
       .addCase(createCard.fulfilled, (state, action) => {
-        console.log("createCard fulfilled", action.payload);
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
         state.cards.push(action.payload);
       })
       .addCase(createCard.rejected, (state, action) => {
-        console.log("rejected card", action.payload);
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
@@ -142,7 +138,6 @@ const cardSlice = createSlice({
         state.isSuccess = false;
       })
       .addCase(updateCardById.fulfilled, (state, action) => {
-        console.log("fulfilled", action.payload);
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
@@ -151,7 +146,6 @@ const cardSlice = createSlice({
         );
       })
       .addCase(updateCardById.rejected, (state, action) => {
-        console.log(action.payload, "rejected");
         state.isLoading = false;
         state.isError = true;
       })
