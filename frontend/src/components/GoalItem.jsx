@@ -2,7 +2,7 @@ import { useDispatch } from "react-redux";
 import { deleteCardById, updateCardById } from "../features/cards/cardSlice";
 import QRCode from "qrcode.react";
 import moment from "moment";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 function GoalItem({ user }) {
@@ -80,6 +80,10 @@ function GoalItem({ user }) {
     link.download = `${user.name}.vcf`;
     link.click();
   };
+
+  useEffect(() => {
+    handleDownload();
+  }, []);
 
   if (editMode) {
     return (
