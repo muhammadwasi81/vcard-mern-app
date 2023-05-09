@@ -39,6 +39,25 @@ export const getCards = createAsyncThunk(
   }
 );
 
+// Get user goal by id
+export const getCardsForCurrentUser = createAsyncThunk(
+  "goals/getById",
+  async (id, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await cardService.getCardsForCurrentUser(id, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 // Delete user goal
 export const deleteCardById = createAsyncThunk(
   "goals/delete",
@@ -111,6 +130,24 @@ const cardSlice = createSlice({
         state.cards = action.payload;
       })
       .addCase(getCards.rejected, (state, { payload }) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = payload;
+      })
+      .addCase(getCardsForCurrentUser.pending, (state) => {
+        state.isLoading = true;
+        state.isError = false;
+        state.isSuccess = false;
+      })
+      .addCase(getCardsForCurrentUser.fulfilled, (state, action) => {
+        console.log("fulfilled", action.payload);
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.cards = action.payload;
+      })
+      .addCase(getCardsForCurrentUser.rejected, (state, { payload }) => {
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;

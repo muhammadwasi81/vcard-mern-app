@@ -1,13 +1,27 @@
 const asyncHandler = require("express-async-handler");
 const Card = require("../models/CardModel");
+const User = require("../models/userModel");
 
 // @desc    Get all cards
 // @route   GET /api/cards
 // @access  Private
 const getCards = asyncHandler(async (req, res) => {
   const cards = await Card.find({ user: req.user._id });
-  console.log(cards, "getCards");
+  //console.log(cards, "getCards");
   res.status(200).json(cards);
+});
+
+const getCardsForCurrentUser = asyncHandler(async (req, res) => {
+  const userId = req.params.id;
+  console.log(userId, "user id");
+  const cards = await Card.find({ user: userId });
+  console.log(cards, "getCardsForCurrentUser");
+  if (cards) {
+    res.status(200).json(cards);
+  } else {
+    res.status(404);
+    throw new Error("Cards not found");
+  }
 });
 
 // @desc    Create a card
@@ -25,7 +39,6 @@ const createCard = asyncHandler(async (req, res) => {
     linkedin,
     image,
   } = req.body;
-  console.log(req.body.image, "req.body");
   if (
     !name ||
     !email ||
@@ -58,7 +71,7 @@ const createCard = asyncHandler(async (req, res) => {
     linkedin,
     user: req.user._id,
   });
-  console.log(card, "createCard");
+  // console.log(card, "createCard");
   res.status(201).json(card);
 });
 
@@ -104,7 +117,7 @@ const updateCard = asyncHandler(async (req, res) => {
     card.linkedin = linkedin;
 
     const updatedCard = await card.save();
-    console.log(updatedCard, "updateCard");
+    // console.log(updatedCard, "updateCard");
     res.status(200).json(updatedCard);
   } else {
     res.status(404);
@@ -119,7 +132,7 @@ const deleteCard = asyncHandler(async (req, res) => {
   const card = await Card.findById(req.params.id);
   if (card) {
     await card.remove();
-    console.log("deleteCard");
+    // console.log("deleteCard");
     res.status(200).json({ message: "Card removed" });
   } else {
     res.status(404);
@@ -129,6 +142,8 @@ const deleteCard = asyncHandler(async (req, res) => {
 
 module.exports = {
   getCards,
+  // getCardById,
+  getCardsForCurrentUser,
   createCard,
   updateCard,
   deleteCard,

@@ -4,7 +4,11 @@ import { useSelector, useDispatch } from "react-redux";
 import GoalForm from "../components/GoalForm";
 import GoalItem from "../components/GoalItem";
 import Spinner from "../components/Spinner";
-import { getCards, reset } from "../features/cards/cardSlice";
+import {
+  getCards,
+  getCardsForCurrentUser,
+  reset,
+} from "../features/cards/cardSlice";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -14,7 +18,7 @@ function Dashboard() {
   const { cards, isLoading, isError, message } = useSelector(
     (state) => state.cards
   );
-  console.log("cards", cards);
+  console.log("singleUser data", cards);
   useEffect(() => {
     if (isError) {
       console.log(message);
@@ -25,11 +29,14 @@ function Dashboard() {
     }
 
     dispatch(getCards());
-
     return () => {
       dispatch(reset());
     };
   }, [user, navigate, isError, message, dispatch]);
+
+  useEffect(() => {
+    dispatch(getCardsForCurrentUser(user._id));
+  }, []);
 
   if (isLoading) {
     return <Spinner />;

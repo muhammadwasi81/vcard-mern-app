@@ -6,9 +6,13 @@ const {
   createCard,
   updateCard,
   deleteCard,
+  getCardsForCurrentUser,
+  // getCardById,
 } = require("../controllers/cardController");
 
 router.get("/", protect, getCards);
+// router.get("/:id", protect, getCardById);
+router.get("/:id", protect, getCardsForCurrentUser);
 router.post("/", protect, createCard);
 router.put("/:id", protect, updateCard);
 router.delete("/:id", protect, deleteCard);

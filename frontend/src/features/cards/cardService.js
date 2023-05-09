@@ -28,12 +28,13 @@ const getAllCards = async (token) => {
     const response = await axios.get(API_URL, config);
     return response.data;
   } catch (err) {
-    console.log(err);
+    console.log(err, { cause: err });
   }
 };
 
 // Get a card by id
-const getCardById = async (id, token) => {
+const getCardsForCurrentUser = async (id, token) => {
+  console.log(id, "id in service");
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -41,6 +42,7 @@ const getCardById = async (id, token) => {
   };
   try {
     const response = await axios.get(API_URL + id, config);
+    console.log(response.data, "getCardById");
     return response.data;
   } catch (err) {
     console.log(err);
@@ -83,7 +85,7 @@ const deleteCardById = async (id, token) => {
 const cardService = {
   createCard,
   getAllCards,
-  getCardById,
+  getCardsForCurrentUser,
   updateCardById,
   deleteCardById,
 };
