@@ -193,7 +193,7 @@ function GoalItem({ user }) {
         <QRCode
           size={256}
           className="m-auto w-75 h-75"
-          value={"https://vcard-app.onrender.com"}
+          value={`https://vcard-app.onrender.com/${user.name}`}
         />
 
         <button className="btn btn-primary" onClick={handleDownload}>

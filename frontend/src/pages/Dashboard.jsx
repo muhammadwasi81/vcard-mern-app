@@ -28,7 +28,7 @@ function Dashboard() {
       navigate("/");
     }
 
-    dispatch(getCards());
+    // dispatch(getCards());
     return () => {
       dispatch(reset());
     };
