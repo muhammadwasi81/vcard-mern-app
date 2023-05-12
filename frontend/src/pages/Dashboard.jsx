@@ -25,7 +25,7 @@ function Dashboard() {
     }
 
     if (!user) {
-      navigate("/login");
+      navigate("/");
     }
 
     dispatch(getCards());
@@ -35,7 +35,7 @@ function Dashboard() {
   }, [user, navigate, isError, message, dispatch]);
 
   useEffect(() => {
-    dispatch(getCardsForCurrentUser(user._id));
+    dispatch(getCardsForCurrentUser(user?._id));
   }, []);
 
   if (isLoading) {

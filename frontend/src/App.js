@@ -1,4 +1,10 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useParams,
+  Navigate,
+} from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Header from "./components/Header";
@@ -9,14 +15,22 @@ import { useSelector } from "react-redux";
 
 function App() {
   const { user } = useSelector((state) => state.auth);
+  const { username } = useParams();
+  console.log(username, "params");
   return (
     <>
       <Router>
         <div className="container">
           <Header />
           <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/login" element={<Login />} />
+            <Route
+              path="/"
+              element={
+                user ? <Navigate to={`/${user.name}`} replace /> : <Login />
+              }
+            />
+            <Route path="/:name" element={<Dashboard />} />
+            {/* <Route path="/login" element={<Login />} /> */}
             <Route path="/register" element={<Register />} />
           </Routes>
         </div>
