@@ -2,7 +2,6 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  useParams,
   Navigate,
 } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
@@ -12,11 +11,10 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { useSelector } from "react-redux";
+import VCard from "./components/vCard";
 
 function App() {
   const { user } = useSelector((state) => state.auth);
-  const { username } = useParams();
-  console.log(username, "params");
   return (
     <>
       <Router>
@@ -29,8 +27,8 @@ function App() {
                 user ? <Navigate to={`/${user.name}`} replace /> : <Login />
               }
             />
+            <Route path="/vcard/:id" element={<VCard />} />
             <Route path="/:name" element={<Dashboard />} />
-            {/* <Route path="/login" element={<Login />} /> */}
             <Route path="/register" element={<Register />} />
           </Routes>
         </div>

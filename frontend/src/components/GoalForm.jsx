@@ -4,6 +4,7 @@ import { createCard } from "../features/cards/cardSlice";
 import { toast } from "react-toastify";
 import axios from "axios";
 import Spinner from "./Spinner";
+import imageCompression from "browser-image-compression";
 
 function GoalForm() {
   const dispatch = useDispatch();
@@ -18,7 +19,9 @@ function GoalForm() {
   const [uploading, setUploading] = useState(false);
   const [image, setImage] = useState("");
   const [previewImg, setPreviewImg] = useState("");
+  const [base64Image, setBase64Image] = useState("");
 
+  console.log("base64Image", base64Image);
   const createPayload = () => {
     const payloadData = {
       name,
@@ -29,7 +32,7 @@ function GoalForm() {
       snapchat,
       instagram,
       linkedin,
-      image: `/images/${image}`,
+      image: base64Image,
     };
     console.log(payloadData, "payloadData");
     return payloadData;
@@ -65,28 +68,53 @@ function GoalForm() {
   };
 
   const uploadFileHandler = async (e) => {
-    const formData = new FormData();
-    const files = e.target.files[0];
-    formData.append("file", files);
-    formData.append("filename", e.target.files[0].name);
-    console.log(formData, "formData");
-    setUploading(true);
+    const file = e.target.files[0];
+    const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+    };
     try {
-      const { data } = await axios.post(`/api/upload`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      console.log(data, "data");
-      setImage(data.filename);
-      setUploading(false);
-      setPreviewImg({
-        preview: URL.createObjectURL(files),
-        data: files,
-      });
+      const compressedFile = await imageCompression(file, options);
+      const reader = new FileReader();
+      reader.readAsDataURL(compressedFile);
+      reader.onloadend = () => {
+        const base64data = reader.result;
+        console.log(base64data, "base64data");
+        const formData = new FormData();
+        formData.append("file", compressedFile);
+        formData.append("filename", compressedFile.name);
+        setUploading(true);
+        try {
+          axios
+            .post(`/api/upload`, formData, {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            })
+            .then((response) => {
+              const { data } = response;
+              console.log(data, "data");
+              setImage(data.filename);
+              setBase64Image(base64data);
+              setUploading(false);
+              setPreviewImg({
+                preview: URL.createObjectURL(compressedFile),
+                data: compressedFile,
+                base64: base64data,
+              });
+            })
+            .catch((error) => {
+              console.error(error);
+              setUploading(false);
+            });
+        } catch (error) {
+          console.error(error);
+          setUploading(false);
+        }
+      };
     } catch (error) {
-      console.error(error);
-      setUploading(false);
+      throw new Error(`Error: ${error}`, { cause: error });
     }
   };
   return (

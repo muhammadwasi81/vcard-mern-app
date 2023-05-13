@@ -1,9 +1,10 @@
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { deleteCardById, updateCardById } from "../features/cards/cardSlice";
 import QRCode from "qrcode.react";
 import moment from "moment";
-import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 function GoalItem({ user }) {
   const dispatch = useDispatch();
@@ -81,9 +82,9 @@ function GoalItem({ user }) {
     link.click();
   };
 
-  // useEffect(() => {
-  //   handleDownload();
-  // }, []);
+  useEffect(() => {
+    handleDownload();
+  }, []);
 
   if (editMode) {
     return (
@@ -195,7 +196,13 @@ function GoalItem({ user }) {
           className="m-auto w-75 h-75"
           value={`https://vcard-app.onrender.com/${user.name}`}
         />
-
+        {/* copy link */}
+        {/* <CopyToClipboard
+          text={`http://localhost:3000/vcard/${user._id}`}
+          onCopy={() => toast.success("Copied to clipboard")}
+        >
+          <button className="btn btn-primary">Copy Link</button>
+        </CopyToClipboard> */}
         <button className="btn btn-primary" onClick={handleDownload}>
           Download vCard
         </button>
