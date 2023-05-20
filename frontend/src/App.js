@@ -12,6 +12,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { useSelector } from "react-redux";
 import VCard from "./components/vCard";
+import NotFound from "./pages/404";
 
 function App() {
   const { user } = useSelector((state) => state.auth);
@@ -19,7 +20,7 @@ function App() {
     <>
       <Router>
         <div className="container">
-          <Header />
+          {/* <Header /> */}
           <Routes>
             <Route
               path="/"
@@ -30,6 +31,7 @@ function App() {
             <Route path="/vcard/:id" element={<VCard />} />
             <Route path="/:name" element={<Dashboard />} />
             <Route path="/register" element={<Register />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
       </Router>

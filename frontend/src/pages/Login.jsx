@@ -1,12 +1,16 @@
 import { useState, useEffect } from "react";
-import { FaSignInAlt } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { login, reset } from "../features/auth/authSlice";
 import Spinner from "../components/Spinner";
+import "../index.css";
+import { AiFillEye } from "react-icons/ai";
+import { AiOutlineEyeInvisible } from "react-icons/ai";
 
 function Login() {
+  const [showPassword, setShowPassword] = useState(false);
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -27,7 +31,7 @@ function Login() {
     }
 
     if (isSuccess || user) {
-      navigate(`/`);
+      navigate("/");
     }
 
     dispatch(reset());
@@ -47,7 +51,6 @@ function Login() {
       password,
     };
     dispatch(login(userData));
-    // navigate(`/${user?.name}`);
   };
 
   if (isLoading) {
@@ -55,20 +58,38 @@ function Login() {
   }
 
   return (
-    <>
-      <section className="heading">
-        <h1>
-          <FaSignInAlt /> Login
-        </h1>
-        <p>Login and start setting goals</p>
-      </section>
-
-      <section className="form">
-        <form onSubmit={onSubmit}>
+    <section className="container">
+      <div className="row">
+        <img
+          src="https://windoe.shop/wp-content/uploads/2021/09/LOGO-WINDOE-APROBADO-01.png"
+          alt="logo"
+          className="img-fluid logo w-25 m-auto my-5"
+        />
+        <div>
+          <h2 className="text-uppercase text-primary mt-2">sign in</h2>
+          <button className="btn btn-primary btn-sm google__btn">
+            <img
+              src="https://img.icons8.com/color/48/000000/google-logo.png"
+              alt="google"
+              className="img-fluid google__logo"
+            />
+            {"  "}
+            Sign in with Google
+          </button>
+        </div>
+        <div className="my-2 d-flex justify-content-center align-items-center">
+          <div className="border-width border-bottom"></div>
+          <span className="mx-2 text-muted">or</span>
+          <div className="border-width border-bottom"></div>
+        </div>
+        <form
+          onSubmit={onSubmit}
+          className="d-flex flex-column justify-content-center align-items-center"
+        >
           <div className="form-group">
             <input
               type="email"
-              className="form-control"
+              className="form-control input__field"
               id="email"
               name="email"
               value={email}
@@ -77,25 +98,41 @@ function Login() {
             />
           </div>
           <div className="form-group">
-            <input
-              type="password"
-              className="form-control"
-              id="password"
-              name="password"
-              value={password}
-              placeholder="Enter password"
-              onChange={onChange}
-            />
+            <div className="input-group">
+              <input
+                type={showPassword ? "text" : "password"}
+                className="form-control input__field"
+                id="password"
+                name="password"
+                value={password}
+                placeholder="Enter your password"
+                onChange={onChange}
+              />
+              <div
+                className="eye__icon__container"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <AiFillEye className="eye__icon" />
+                ) : (
+                  <AiOutlineEyeInvisible className="eye__icon" />
+                )}
+              </div>
+            </div>
           </div>
-
-          <div className="form-group">
-            <button type="submit" className="btn btn-block">
-              Submit
-            </button>
+          <div>
+            Don't have an account?
+            <Link to="/register" className="text-primary">
+              {" "}
+              Sign up
+            </Link>
           </div>
+          <button type="submit" className="btn btn-primary login__btn">
+            Login
+          </button>
         </form>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }
 

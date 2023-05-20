@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap");
 
 * {
   margin: 0;
@@ -7,7 +7,7 @@
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   height: 100vh;
 }
 
@@ -215,5 +215,90 @@ h3 {
 
   .heading p {
     font-size: 1.5rem;
+  }
+}
+:root {
+  --primary: #e5294b;
+  --secondary: #fff;
+  --light: #f4f4f4;
+  --dark: #333;
+  --danger: #ff0000;
+  --success: #00ff00;
+  --warning: #ffcc00;
+  --info: #00ccff;
+  --light-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  --dark-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+/* new css */
+.text-primary {
+  color: var(--primary) !important;
+}
+.google__btn {
+  background: var(--light) !important;
+  color: var(--primary) !important;
+  border: none;
+  outline: none;
+  user-select: none;
+  cursor: pointer;
+  padding: 14px 20px;
+  width: 300px;
+}
+.google__logo {
+  width: 22px;
+  height: 22px;
+  margin-right: 10px;
+}
+.google__btn:hover {
+  transform: scale(0.98) !important;
+}
+.border-width {
+  border-width: 2px !important;
+  width: 130px;
+}
+.input__field {
+  border-radius: 20px !important;
+  border: 10px solid var(--light) !important;
+  padding: 10px 20px !important;
+  outline: none !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: var(--primary) !important;
+  min-width: 300px !important;
+}
+.input__field::placeholder {
+  color: var(--primary) !important;
+  font-weight: 600 !important;
+}
+.eye__icon__container {
+  position: relative;
+}
+.eye__icon {
+  position: absolute;
+  top: 42%;
+  font-size: 21px;
+  right: 20px;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+.login__btn {
+  background: var(--primary);
+  width: 300px;
+  border: none;
+  outline: none;
+}
+.login__btn:hover {
+  transform: scale(0.98);
+  background-color: var(--primary);
+}
+
+@media (max-width: 600px) {
+  .google__btn {
+    width: 100% !important;
+  }
+  .input__field {
+    width: 100% !important;
+  }
+  .login__btn {
+    width: 100% !important;
   }
 }

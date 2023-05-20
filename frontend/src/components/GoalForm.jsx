@@ -21,7 +21,6 @@ function GoalForm() {
   const [previewImg, setPreviewImg] = useState("");
   const [base64Image, setBase64Image] = useState("");
 
-  console.log("base64Image", base64Image);
   const createPayload = () => {
     const payloadData = {
       name,
@@ -34,7 +33,6 @@ function GoalForm() {
       linkedin,
       image: base64Image,
     };
-    console.log(payloadData, "payloadData");
     return payloadData;
   };
   const entities = [
@@ -94,7 +92,6 @@ function GoalForm() {
             })
             .then((response) => {
               const { data } = response;
-              console.log(data, "data");
               setImage(data.filename);
               setBase64Image(base64data);
               setUploading(false);
@@ -105,7 +102,7 @@ function GoalForm() {
               });
             })
             .catch((error) => {
-              console.error(error);
+              console.log(error.message);
               setUploading(false);
             });
         } catch (error) {

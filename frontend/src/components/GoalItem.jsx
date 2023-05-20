@@ -82,9 +82,9 @@ function GoalItem({ user }) {
     link.click();
   };
 
-  useEffect(() => {
-    handleDownload();
-  }, []);
+  // useEffect(() => {
+  //   handleDownload();
+  // }, []);
 
   if (editMode) {
     return (
