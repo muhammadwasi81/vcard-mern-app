@@ -1,14 +1,10 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import GoalForm from "../components/GoalForm";
-import GoalItem from "../components/GoalItem";
-import Spinner from "../components/Spinner";
-import {
-  getCards,
-  getCardsForCurrentUser,
-  reset,
-} from "../features/cards/cardSlice";
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import GoalForm from '../components/GoalForm';
+import GoalItem from '../components/GoalItem';
+import Spinner from '../components/Spinner';
+import { getCardsForCurrentUser, reset } from '../features/cards/cardSlice';
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -18,17 +14,16 @@ function Dashboard() {
   const { cards, isLoading, isError, message } = useSelector(
     (state) => state.cards
   );
-  console.log("singleUser data", cards);
+  console.log('singleUser data', cards);
   useEffect(() => {
     if (isError) {
       console.log(message);
     }
 
     if (!user) {
-      navigate("/");
+      navigate('/');
     }
 
-    // dispatch(getCards());
     return () => {
       dispatch(reset());
     };
@@ -50,7 +45,7 @@ function Dashboard() {
       <GoalForm />
       <section className="goals">
         {cards?.map((card) => (
-          <GoalItem key={card?._id} user={card} />
+          <GoalItem key={card._id} user={card} />
         ))}
       </section>
     </>

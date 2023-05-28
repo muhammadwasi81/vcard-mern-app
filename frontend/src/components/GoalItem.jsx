@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { deleteCardById, updateCardById } from '../features/cards/cardSlice';
+import {
+  deleteCardById,
+  removeCards,
+  updateCardById,
+} from '../features/cards/cardSlice';
 import QRCode from 'qrcode.react';
 import moment from 'moment';
 import { toast } from 'react-toastify';
@@ -179,16 +183,19 @@ function GoalItem({ user }) {
         >
           <button className="btn btn-primary">Copy Link</button>
         </CopyToClipboard> */}
-        <button className="btn btn-primary" onClick={handleDownload}>
+        <button className="btn btn-primary login__btn" onClick={handleDownload}>
           Download vCard
         </button>
         <button
-          onClick={() => dispatch(deleteCardById(user._id))}
+          onClick={() => dispatch(removeCards(user._id))}
           className="close"
         >
           X
         </button>
-        <button className="btn btn-primary" onClick={() => setEditMode(true)}>
+        <button
+          className="btn btn-danger mt-2 w-25 m-auto"
+          onClick={() => setEditMode(true)}
+        >
           Edit
         </button>
       </div>

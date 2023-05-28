@@ -1,9 +1,9 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import cardService from "./cardService";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import cardService from './cardService';
 
 /// Create new goal
 export const createCard = createAsyncThunk(
-  "goals/create",
+  'goals/create',
   async (cardData, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token;
@@ -22,7 +22,7 @@ export const createCard = createAsyncThunk(
 
 // Get user goals
 export const getCards = createAsyncThunk(
-  "goals/getAll",
+  'goals/getAll',
   async (_, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token;
@@ -41,7 +41,7 @@ export const getCards = createAsyncThunk(
 
 // Get user goal by id
 export const getCardsForCurrentUser = createAsyncThunk(
-  "goals/getById",
+  'goals/getById',
   async (id, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token;
@@ -60,11 +60,12 @@ export const getCardsForCurrentUser = createAsyncThunk(
 
 // Delete user goal
 export const deleteCardById = createAsyncThunk(
-  "goals/delete",
-  async (id, thunkAPI) => {
+  'goals/delete',
+  async (_id, thunkAPI) => {
+    console.log('id', _id);
     try {
       const token = thunkAPI.getState().auth.user.token;
-      return await cardService.deleteCardById(id, token);
+      return await cardService.deleteCardById(_id, token);
     } catch (error) {
       const message =
         (error.response &&
@@ -79,7 +80,7 @@ export const deleteCardById = createAsyncThunk(
 
 // Update user goal
 export const updateCardById = createAsyncThunk(
-  "goals/update",
+  'goals/update',
   async ({ payload }, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token;
@@ -102,18 +103,21 @@ const initialState = {
   isLoading: false,
   isError: false,
   isSuccess: false,
-  message: "",
+  message: '',
 };
 
 const cardSlice = createSlice({
-  name: "cards",
+  name: 'cards',
   initialState,
   reducers: {
     reset: (state) => {
       state.isLoading = false;
       state.isSuccess = false;
       state.isError = false;
-      state.message = "";
+      state.message = '';
+    },
+    removeCards: (state, action) => {
+      state.cards = state.cards.filter((card) => card._id !== action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -123,25 +127,13 @@ const cardSlice = createSlice({
       state.isSuccess = false;
     });
     builder
-      .addCase(getCards.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isError = false;
-        state.isSuccess = true;
-        state.cards = action.payload;
-      })
-      .addCase(getCards.rejected, (state, { payload }) => {
-        state.isLoading = false;
-        state.isError = true;
-        state.isSuccess = false;
-        state.message = payload;
-      })
       .addCase(getCardsForCurrentUser.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
         state.isSuccess = false;
       })
       .addCase(getCardsForCurrentUser.fulfilled, (state, action) => {
-        console.log("fulfilled", action.payload);
+        console.log('getCardsForCurrentUser', action.payload);
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
@@ -185,24 +177,9 @@ const cardSlice = createSlice({
       .addCase(updateCardById.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
-      })
-      .addCase(deleteCardById.pending, (state, action) => {
-        state.isLoading = true;
-      })
-      .addCase(deleteCardById.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isSuccess = true;
-        state.cards = state.cards.filter(
-          (card) => card.id !== action.payload.id
-        );
-      })
-      .addCase(deleteCardById.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isError = true;
-        state.message = action.payload;
       });
   },
 });
 
-export const { reset } = cardSlice.actions;
+export const { removeCards, reset } = cardSlice.actions;
 export default cardSlice.reducer;

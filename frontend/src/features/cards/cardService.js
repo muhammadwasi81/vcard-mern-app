@@ -1,6 +1,6 @@
-import axios from "axios";
+import axios from 'axios';
 
-const API_URL = "/api/cards/";
+const API_URL = '/api/cards/';
 
 // Create a new card
 const createCard = async (cardData, token) => {
@@ -34,7 +34,7 @@ const getAllCards = async (token) => {
 
 // Get a card by id
 const getCardsForCurrentUser = async (id, token) => {
-  console.log(id, "id in service");
+  console.log(id, 'id in service');
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -42,7 +42,7 @@ const getCardsForCurrentUser = async (id, token) => {
   };
   try {
     const response = await axios.get(API_URL + id, config);
-    console.log(response.data, "getCardById");
+    console.log(response.data, 'getCardById');
     return response.data;
   } catch (err) {
     console.log(err);
@@ -51,8 +51,8 @@ const getCardsForCurrentUser = async (id, token) => {
 
 // Update a card by id
 const updateCardById = async (id, cardData, token) => {
-  console.log(id, "id in service");
-  console.log(cardData, "cardData in service");
+  console.log(id, 'id in service');
+  console.log(cardData, 'cardData in service');
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -60,7 +60,7 @@ const updateCardById = async (id, cardData, token) => {
   };
   try {
     const response = await axios.put(API_URL + id, cardData, config);
-    console.log(response.data, "update service");
+    console.log(response.data, 'update service');
     return response.data;
   } catch (err) {
     console.log(err);
@@ -69,6 +69,7 @@ const updateCardById = async (id, cardData, token) => {
 
 // Delete a card by id
 const deleteCardById = async (id, token) => {
+  console.log(id, 'id in service');
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -76,6 +77,7 @@ const deleteCardById = async (id, token) => {
   };
   try {
     const response = await axios.delete(API_URL + id, config);
+    console.log(response.data, 'delete service');
     return response.data;
   } catch (err) {
     console.log(err);
