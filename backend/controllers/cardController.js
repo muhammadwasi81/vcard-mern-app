@@ -1,6 +1,6 @@
-const asyncHandler = require("express-async-handler");
-const Card = require("../models/CardModel");
-const User = require("../models/userModel");
+const asyncHandler = require('express-async-handler');
+const Card = require('../models/CardModel');
+const User = require('../models/userModel');
 
 // @desc    Get all cards
 // @route   GET /api/cards
@@ -13,14 +13,14 @@ const getCards = asyncHandler(async (req, res) => {
 
 const getCardsForCurrentUser = asyncHandler(async (req, res) => {
   const userId = req.params.id;
-  console.log(userId, "user id");
+  console.log(userId, 'user id');
   const cards = await Card.find({ user: userId });
-  console.log(cards, "getCardsForCurrentUser");
+  console.log(cards, 'getCardsForCurrentUser');
   if (cards) {
     res.status(200).json(cards);
   } else {
     res.status(404);
-    throw new Error("Cards not found");
+    throw new Error('Cards not found');
   }
 });
 
@@ -50,13 +50,22 @@ const createCard = asyncHandler(async (req, res) => {
     !linkedin ||
     !image
   ) {
-    res.status(400);
-    throw new Error("Please fill out all fields");
+    res.status(400).json({ message: 'Please fill in all fields' });
+    return;
+  }
+
+  const userCards = await Card.find({ user: req.user._id });
+  console.log(userCards, 'userCards');
+  if (userCards.length >= 3) {
+    res
+      .status(400)
+      .json({ message: 'You have reached the maximum number of cards' });
+    return;
   }
   const userExists = await Card.findOne({ email });
   if (userExists) {
-    res.status(400);
-    throw new Error("User already exists");
+    res.status(400).json({ message: 'User already exists' });
+    return;
   }
 
   const card = await Card.create({
@@ -72,7 +81,7 @@ const createCard = asyncHandler(async (req, res) => {
     user: req.user._id,
   });
   // console.log(card, "createCard");
-  res.status(201).json(card);
+  res.status(201).json({ message: 'Card Created Successfully', card });
 });
 
 // @desc    Update a card
@@ -101,8 +110,8 @@ const updateCard = asyncHandler(async (req, res) => {
     !instagram ||
     !linkedin
   ) {
-    res.status(400);
-    throw new Error("Please fill out all fields");
+    res.status(400).send('Please fill out all fields');
+    throw new Error('Please fill out all fields');
   }
   const card = await Card.findById(req.params.id);
   if (card) {
@@ -118,10 +127,10 @@ const updateCard = asyncHandler(async (req, res) => {
 
     const updatedCard = await card.save();
     // console.log(updatedCard, "updateCard");
-    res.status(200).json(updatedCard);
+    res.status(200).json({ message: 'Card Updated Successfully', updatedCard });
   } else {
     res.status(404);
-    throw new Error("Card not found");
+    throw new Error('Card not found');
   }
 });
 
@@ -133,16 +142,15 @@ const deleteCard = asyncHandler(async (req, res) => {
   if (card) {
     await card.remove();
     // console.log("deleteCard");
-    res.status(200).json({ message: "Card removed" });
+    res.status(200).json({ message: 'Card removed' });
   } else {
     res.status(404);
-    throw new Error("Card not found");
+    throw new Error('Card not found');
   }
 });
 
 module.exports = {
   getCards,
-  // getCardById,
   getCardsForCurrentUser,
   createCard,
   updateCard,

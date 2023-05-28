@@ -1,49 +1,25 @@
-import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { deleteCardById, updateCardById } from "../features/cards/cardSlice";
-import QRCode from "qrcode.react";
-import moment from "moment";
-import { toast } from "react-toastify";
-import { CopyToClipboard } from "react-copy-to-clipboard";
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { deleteCardById, updateCardById } from '../features/cards/cardSlice';
+import QRCode from 'qrcode.react';
+import moment from 'moment';
+import { toast } from 'react-toastify';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 function GoalItem({ user }) {
   const dispatch = useDispatch();
   const [editMode, setEditMode] = useState(false);
   const [updatedUser, setUpdateUser] = useState(user);
-  const [qrCodeData, setQrCodeData] = useState(
-    `BEGIN:VCARD\nVERSION:3.0\nN:${user.name}\nTEL:${user.telephone}\nEMAIL:${
-      user.email
-    }\nURL:${user.website}\nBDAY:${new Date(user.birthday)
-      .toISOString()
-      .substring(0, 10)}\nPHOTO;TYPE=JPEG;VALUE=URL:${
-      user.image
-    }\nX-SOCIALPROFILE;TYPE=linkedin:https://www.linkedin.com/in/${
-      user.linkedin
-    }\nX-SOCIALPROFILE;TYPE=instagram:https://www.instagram.com/${
-      user.instagram
-    }\nX-SOCIALPROFILE;TYPE=snapchat:https://www.snapchat.com/add/${
-      user.snapchat
-    }\nEND:VCARD`
-  );
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUpdateUser((prevUser) => ({ ...prevUser, [name]: value }));
-    if (name === "name" || name === "email") {
-      setQrCodeData((prevData) => {
-        const newData = prevData.replace(
-          new RegExp(`${name.toUpperCase()}:.+\\n`),
-          `${name.toUpperCase()}:${value}\\n`
-        );
-        return newData;
-      });
-    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (updatedUser.name !== user.name || updatedUser.email !== user.email) {
-      return toast.error("Name and Email cannot be changed");
+      return toast.error('Name and Email cannot be changed');
     }
     const payload = {
       id: updatedUser._id,
@@ -62,7 +38,7 @@ function GoalItem({ user }) {
   };
 
   const handleDownload = () => {
-    const imageBase64 = user.image.split(",")[1];
+    const imageBase64 = user.image.split(',')[1];
     const vcard = `BEGIN:VCARD\nVERSION:3.0\nN:${user.name}\nTEL:${
       user.telephone
     }\nEMAIL:${user.email}\nURL:${user.website}\nBDAY:${new Date(user.birthday)
@@ -75,8 +51,8 @@ function GoalItem({ user }) {
     }\nX-SOCIALPROFILE;TYPE=instagram:${
       user.instagram
     }\nX-SOCIALPROFILE;TYPE=snapchat:${user.snapchat}\nEND:VCARD`;
-    const blob = new Blob([vcard], { type: "text/vcard" });
-    const link = document.createElement("a");
+    const blob = new Blob([vcard], { type: 'text/vcard' });
+    const link = document.createElement('a');
     link.href = window.URL.createObjectURL(blob);
     link.download = `${user.name}.vcf`;
     link.click();
@@ -150,7 +126,7 @@ function GoalItem({ user }) {
             <input
               type="date"
               name="birthday"
-              value={moment(updatedUser.birthday).format("YYYY-MM-DD")}
+              value={moment(updatedUser.birthday).format('YYYY-MM-DD')}
               onChange={handleInputChange}
             />
           </div>
@@ -158,7 +134,7 @@ function GoalItem({ user }) {
             src={updatedUser.image}
             alt={updatedUser.name}
             className="m-auto"
-            style={{ width: " 50px", height: "50px", borderRadius: "50%" }}
+            style={{ width: ' 50px', height: '50px', borderRadius: '50%' }}
           />
           <button className="btn btn-primary" type="submit">
             Update
@@ -184,12 +160,12 @@ function GoalItem({ user }) {
         <div>Linkedin: {user?.linkedin}</div>
         <div>Instagram: {user?.instagram}</div>
         <div>Snapchat: {user?.snapchat}</div>
-        <div>BirthDate: {moment(user?.birthday).format("MM/DD/YYYY")}</div>
+        <div>BirthDate: {moment(user?.birthday).format('MM/DD/YYYY')}</div>
         <img
           src={user.image}
           alt={user.name}
           className="m-auto"
-          style={{ width: "50px", height: "50px", borderRadius: "50%" }}
+          style={{ width: '50px', height: '50px', borderRadius: '50%' }}
         />
         <QRCode
           size={256}

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { register, reset } from "../features/auth/authSlice";
 import Spinner from "../components/Spinner";
@@ -124,6 +124,12 @@ function Register() {
                 onChange={onChange}
               />
             </div>
+            <span>
+              Already have an account?{" "}
+              <Link to="/" className="text-danger">
+                Login
+              </Link>
+            </span>
             <button type="submit" className="btn btn-primary login__btn">
               Register
             </button>
