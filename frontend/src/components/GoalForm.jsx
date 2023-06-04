@@ -9,6 +9,13 @@ import '../index.css';
 
 function GoalForm() {
   const dispatch = useDispatch();
+  const [showPhoneInput, setShowPhoneInput] = useState(false);
+  const [showBirthdayInput, setShowBirthdayInput] = useState(false);
+  const [showInstagram, setShowInstagram] = useState(false);
+  const [showLinkedIn, setShowLinkedIn] = useState(false);
+  const [showWebsite, setShowWebsite] = useState(false);
+  const [showSnapchat, setShowSnapchat] = useState(false);
+  const [phoneValue, setPhoneValue] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -36,23 +43,8 @@ function GoalForm() {
     };
     return payloadData;
   };
-  const entities = [
-    name,
-    email,
-    phone,
-    birthday,
-    website,
-    snapchat,
-    instagram,
-    linkedin,
-    image,
-  ];
-
   const onSubmit = (e) => {
     e.preventDefault();
-    if (entities.some((entity) => entity === '')) {
-      return toast.error('Please fill in all fields');
-    }
     const payload = createPayload();
     dispatch(createCard(payload));
     setName('');
@@ -101,6 +93,7 @@ function GoalForm() {
                 data: compressedFile,
                 base64: base64data,
               });
+              return toast.success(`Image uploaded successfully`);
             })
             .catch((error) => {
               console.log(error.message);
@@ -112,6 +105,7 @@ function GoalForm() {
         }
       };
     } catch (error) {
+      toast.error(`Error: ${error.message}`);
       throw new Error(`Error: ${error}`, { cause: error });
     }
   };
@@ -137,10 +131,7 @@ function GoalForm() {
           />
           {uploading && <Spinner />}
         </div>
-        <div className="form-group">
-          <label htmlFor="text" className="label">
-            Name
-          </label>
+        <div className="form-group mt-2">
           <input
             type="text"
             name="text"
@@ -152,9 +143,6 @@ function GoalForm() {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="email" className="label">
-            Email
-          </label>
           <input
             type="email"
             name="text"
@@ -166,93 +154,123 @@ function GoalForm() {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="text" className="label">
-            Phone
-          </label>
-          <input
-            type="number"
-            inputMode="numeric"
-            name="text"
-            id="text"
-            value={phone}
-            placeholder="Enter your Phone"
-            className="form-control input__field"
-            onChange={(e) => setPhone(e.target.value)}
-          />
+          {showPhoneInput ? (
+            <input
+              type="number"
+              inputMode="numeric"
+              name="phone"
+              id="phone"
+              value={phoneValue}
+              placeholder="Enter your Phone"
+              className="form-control input__field"
+              onChange={(e) => setPhoneValue(e.target.value)}
+              onBlur={() => setShowPhoneInput(false)}
+              autoFocus
+            />
+          ) : (
+            <div className="label" onClick={() => setShowPhoneInput(true)}>
+              Phone Number
+            </div>
+          )}
         </div>
         <div className="form-group">
-          <label htmlFor="text" className="label">
-            Birthday
-          </label>
-          <input
-            type="date"
-            name="date"
-            id="date"
-            value={birthday}
-            placeholder="Enter your Birthday"
-            className="form-control input__field"
-            onChange={(e) => setBirthday(e.target.value)}
-          />
+          {showBirthdayInput ? (
+            <input
+              type="date"
+              name="date"
+              id="date"
+              value={birthday}
+              placeholder="Enter your Birthday"
+              className="form-control input__field"
+              onChange={(e) => setBirthday(e.target.value)}
+              onBlur={() => setShowPhoneInput(false)}
+              autoFocus
+            />
+          ) : (
+            <div className="label" onClick={() => setShowBirthdayInput(true)}>
+              Birthday
+            </div>
+          )}
         </div>
         <div className="form-group">
-          <label htmlFor="text" className="label">
-            Website
-          </label>
-          <input
-            type="text"
-            name="website"
-            id="website"
-            value={website}
-            pattern="^(https?|ftp)://[^\s/$.?#].[^\s]*$"
-            placeholder="Enter your Website"
-            className="form-control input__field"
-            onChange={(e) => setWebsite(e.target.value)}
-          />
+          {showWebsite ? (
+            <input
+              type="text"
+              name="website"
+              id="website"
+              value={website}
+              pattern="^(https?|ftp)://[^\s/$.?#].[^\s]*$"
+              placeholder="Enter your Website"
+              className="form-control input__field"
+              onChange={(e) => setWebsite(e.target.value)}
+              autoFocus
+              onBlur={() => setShowWebsite(false)}
+            />
+          ) : (
+            <div className="label" onClick={() => setShowWebsite(true)}>
+              Website
+            </div>
+          )}
         </div>
         <div className="form-group">
-          <label htmlFor="text" className="label">
-            Snapchat
-          </label>
-          <input
-            type="text"
-            name="text"
-            id="text"
-            value={snapchat}
-            pattern="^[a-zA-Z][a-zA-Z0-9_]{2,14}$"
-            placeholder="Enter your Snapchat"
-            className="form-control input__field"
-            onChange={(e) => setSnapchat(e.target.value)}
-          />
+          {showSnapchat ? (
+            <input
+              type="text"
+              name="text"
+              id="text"
+              value={snapchat}
+              pattern="^[a-zA-Z][a-zA-Z0-9_]{2,14}$"
+              placeholder="Enter your Snapchat"
+              className="form-control input__field"
+              onChange={(e) => setSnapchat(e.target.value)}
+              autoFocus
+              onBlur={() => setShowSnapchat(false)}
+            />
+          ) : (
+            <div className="label" onClick={() => setShowSnapchat(true)}>
+              Snapchat
+            </div>
+          )}
         </div>
         <div className="form-group">
-          <label htmlFor="text" className="label">
-            linkedin
-          </label>
-          <input
-            type="text"
-            name="text"
-            id="text"
-            value={linkedin}
-            pattern="^https:\/\/www\.linkedin\.com\/in\/[a-zA-Z0-9-]+\/?$"
-            placeholder="Enter your linkedin"
-            className="form-control input__field"
-            onChange={(e) => setLinkedin(e.target.value)}
-          />
+          {showLinkedIn ? (
+            <input
+              type="text"
+              name="text"
+              id="text"
+              value={linkedin}
+              pattern="^https:\/\/www\.linkedin\.com\/in\/[a-zA-Z0-9-]+\/?$"
+              placeholder="Enter your linkedin"
+              className="form-control input__field"
+              onChange={(e) => setLinkedin(e.target.value)}
+              autoFocus
+              onBlur={() => setShowLinkedIn(false)}
+            />
+          ) : (
+            <div className="label" onClick={() => setShowLinkedIn(true)}>
+              LinkedIn
+            </div>
+          )}
         </div>
         <div className="form-group">
-          <label htmlFor="text" className="label">
-            Instagram
-          </label>
-          <input
-            type="text"
-            name="text"
-            id="text"
-            value={instagram}
-            pattern="^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$"
-            placeholder="Enter your Instagram"
-            className="form-control input__field"
-            onChange={(e) => setInstagram(e.target.value)}
-          />
+          {showInstagram ? (
+            <input
+              type="text"
+              name="text"
+              id="text"
+              value={instagram}
+              pattern="^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$"
+              placeholder="Enter your Instagram"
+              className="form-control input__field"
+              onChange={(e) => setInstagram(e.target.value)}
+              autoFocus
+              onBlur={() => setShowInstagram(false)}
+            />
+          ) : (
+            <div className="label" onClick={() => setShowInstagram(true)}>
+              Instagram
+            </div>
+          )}
         </div>
         <div className="form-group">
           <button className="btn btn-primary login__btn" type="submit">

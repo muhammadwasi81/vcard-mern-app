@@ -1,20 +1,22 @@
 const asyncHandler = require('express-async-handler');
 const Card = require('../models/CardModel');
-const User = require('../models/userModel');
 
 // @desc    Get all cards
 // @route   GET /api/cards
 // @access  Private
 const getCards = asyncHandler(async (req, res) => {
   const cards = await Card.find({ user: req.user._id });
-  //console.log(cards, "getCards");
+  // console.log(cards, "getCards");
   res.status(200).json(cards);
 });
 
 const getCardsForCurrentUser = asyncHandler(async (req, res) => {
   const userId = req.params.id;
   console.log(userId, 'user id');
-  const cards = await Card.find({ user: userId });
+  const cards = await Card.find({ user: userId }).sort({
+    createdAt: -1,
+    updatedAt: -1,
+  });
   console.log(cards, 'getCardsForCurrentUser');
   if (cards) {
     res.status(200).json(cards);
@@ -39,20 +41,6 @@ const createCard = asyncHandler(async (req, res) => {
     linkedin,
     image,
   } = req.body;
-  if (
-    !name ||
-    !email ||
-    !telephone ||
-    !birthday ||
-    !website ||
-    !snapchat ||
-    !instagram ||
-    !linkedin ||
-    !image
-  ) {
-    res.status(400).json({ message: 'Please fill in all fields' });
-    return;
-  }
 
   const userCards = await Card.find({ user: req.user._id });
   console.log(userCards, 'userCards');
@@ -73,7 +61,7 @@ const createCard = asyncHandler(async (req, res) => {
     email,
     telephone,
     image,
-    birthday,
+    birthday: birthday || new Date(),
     website,
     snapchat,
     instagram,
@@ -99,20 +87,7 @@ const updateCard = asyncHandler(async (req, res) => {
     instagram,
     linkedin,
   } = req.body;
-  if (
-    !name ||
-    !email ||
-    !telephone ||
-    !image ||
-    !birthday ||
-    !website ||
-    !snapchat ||
-    !instagram ||
-    !linkedin
-  ) {
-    res.status(400).send('Please fill out all fields');
-    throw new Error('Please fill out all fields');
-  }
+
   const card = await Card.findById(req.params.id);
   if (card) {
     card.name = name;
@@ -142,7 +117,7 @@ const deleteCard = asyncHandler(async (req, res) => {
   if (card) {
     await card.remove();
     // console.log("deleteCard");
-    res.status(200).json({ message: 'Card removed' });
+    res.status(200).json({ message: 'Card removed successfully' });
   } else {
     res.status(404);
     throw new Error('Card not found');

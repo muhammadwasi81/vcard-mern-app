@@ -1,24 +1,24 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const cardSchema = mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+      ref: 'User',
+      required: false,
     },
     name: {
       type: String,
-      required: [true, "Please add a name"],
+      required: false,
     },
     email: {
       type: String,
-      required: [true, "Please add an email"],
       unique: true,
+      required: false,
     },
     telephone: {
       type: String,
-      required: [true, "Please add a phone number"],
+      required: false,
     },
     image: {
       type: String,
@@ -49,5 +49,4 @@ const cardSchema = mongoose.Schema(
     timestamps: true,
   }
 );
-
-module.exports = mongoose.model("Card", cardSchema);
+module.exports = mongoose.model('Card', cardSchema);

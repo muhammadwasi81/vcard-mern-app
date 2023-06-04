@@ -1,16 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import {
-  deleteCardById,
-  removeCards,
-  updateCardById,
-} from '../features/cards/cardSlice';
-import QRCode from 'qrcode.react';
+import { updateCardById } from '../features/cards/cardSlice';
 import moment from 'moment';
 import { toast } from 'react-toastify';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
+import UserCard from './UserCard';
 
 function GoalItem({ user }) {
+  console.log(user, 'GoalItem');
   const dispatch = useDispatch();
   const [editMode, setEditMode] = useState(false);
   const [updatedUser, setUpdateUser] = useState(user);
@@ -155,51 +151,11 @@ function GoalItem({ user }) {
   }
 
   return (
-    <>
-      <div className="goal card shadow-lg  px-5">
-        <div>Name: {user?.name}</div>
-        <div>Email: {user?.email}</div>
-        <div>Telephone: {user?.telephone}</div>
-        <div>Website: {user?.website}</div>
-        <div>Linkedin: {user?.linkedin}</div>
-        <div>Instagram: {user?.instagram}</div>
-        <div>Snapchat: {user?.snapchat}</div>
-        <div>BirthDate: {moment(user?.birthday).format('MM/DD/YYYY')}</div>
-        <img
-          src={user.image}
-          alt={user.name}
-          className="m-auto"
-          style={{ width: '50px', height: '50px', borderRadius: '50%' }}
-        />
-        <QRCode
-          size={256}
-          className="m-auto w-75 h-75"
-          value={`https://vcard-app.onrender.com/${user.name}`}
-        />
-        {/* copy link */}
-        {/* <CopyToClipboard
-          text={`http://localhost:3000/vcard/${user._id}`}
-          onCopy={() => toast.success("Copied to clipboard")}
-        >
-          <button className="btn btn-primary">Copy Link</button>
-        </CopyToClipboard> */}
-        <button className="btn btn-primary login__btn" onClick={handleDownload}>
-          Download vCard
-        </button>
-        <button
-          onClick={() => dispatch(removeCards(user._id))}
-          className="close"
-        >
-          X
-        </button>
-        <button
-          className="btn btn-danger mt-2 w-25 m-auto"
-          onClick={() => setEditMode(true)}
-        >
-          Edit
-        </button>
-      </div>
-    </>
+    <UserCard
+      user={user}
+      handleDownload={handleDownload}
+      setEditMode={setEditMode}
+    />
   );
 }
 

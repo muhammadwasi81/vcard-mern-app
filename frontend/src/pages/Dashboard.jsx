@@ -5,6 +5,8 @@ import GoalForm from '../components/GoalForm';
 import GoalItem from '../components/GoalItem';
 import Spinner from '../components/Spinner';
 import { getCardsForCurrentUser, reset } from '../features/cards/cardSlice';
+import { BiError } from 'react-icons/bi';
+import { toast } from 'react-toastify';
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -17,7 +19,8 @@ function Dashboard() {
   console.log('singleUser data', cards);
   useEffect(() => {
     if (isError) {
-      console.log(message);
+      toast.error(message);
+      console.log('error', isError);
     }
 
     if (!user) {
@@ -38,15 +41,16 @@ function Dashboard() {
   }
   return (
     <>
-      <section className="heading">
-        <h1>Welcome {user && user.name}</h1>
-        <p>vCard Dashboard</p>
-      </section>
       <GoalForm />
-      <section className="goals">
-        {cards?.map((card) => (
-          <GoalItem key={card._id} user={card} />
-        ))}
+      <section className="w-50 flex m-auto">
+        {cards && cards.length > 0 ? (
+          cards?.map((card) => <GoalItem key={card?._id} user={card} />)
+        ) : (
+          <div>
+            <BiError className="display-2" />
+            <h2 className="text-center">No vCard Found</h2>
+          </div>
+        )}
       </section>
     </>
   );

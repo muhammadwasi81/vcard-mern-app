@@ -177,6 +177,21 @@ const cardSlice = createSlice({
       .addCase(updateCardById.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
+      })
+      .addCase(deleteCardById.pending, (state) => {
+        state.isLoading = true;
+        state.isError = false;
+        state.isSuccess = false;
+      })
+      .addCase(deleteCardById.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.cards = state.cards.filter((card) => card._id !== action.payload);
+      })
+      .addCase(deleteCardById.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
       });
   },
 });
