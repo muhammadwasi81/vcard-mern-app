@@ -15,7 +15,6 @@ function GoalForm() {
   const [showLinkedIn, setShowLinkedIn] = useState(false);
   const [showWebsite, setShowWebsite] = useState(false);
   const [showSnapchat, setShowSnapchat] = useState(false);
-  const [phoneValue, setPhoneValue] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -160,10 +159,10 @@ function GoalForm() {
               inputMode="numeric"
               name="phone"
               id="phone"
-              value={phoneValue}
+              value={phone}
               placeholder="Enter your Phone"
               className="form-control input__field"
-              onChange={(e) => setPhoneValue(e.target.value)}
+              onChange={(e) => setPhone(e.target.value)}
               onBlur={() => setShowPhoneInput(false)}
               autoFocus
             />
