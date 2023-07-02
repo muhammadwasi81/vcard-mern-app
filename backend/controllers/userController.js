@@ -2,36 +2,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
 const User = require('../models/userModel');
-const { signUpBodyValidation } = require('../utils/validationSchema');
-
-// todo: mera wala
-const newRegisterUser = asyncHandler(async (req, res) => {
-  try {
-    const { error } = signUpBodyValidation(req.body);
-    console.log(error, 'error');
-    if (error)
-      return res
-        .status(400)
-        .json({ error: true, message: error.details[0].message });
-    const userExist = await User.findOne({ email: req.body.email });
-    if (userExist) {
-      return res
-        .status(400)
-        .json({ error: true, message: 'User with given email already exist' });
-    }
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(req.body.password, salt);
-    await new User({ ...req.body, password: hashedPassword }).save();
-
-    res
-      .status(201)
-      .json({ error: false, message: 'Account Created Successfully' });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: true, message: 'Internal Server Error' });
-  }
-});
 
 // @desc    Register new user
 // @route   POST /api/users
@@ -64,11 +34,18 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (user) {
+    // Generate access and refresh tokens
+    const accessToken = generateAccessToken(user._id);
+    const refreshToken = generateRefreshToken(user._id);
+
+    user.refreshToken = refreshToken;
+    await user.save();
     res.status(201).json({
       _id: user.id,
       name: user.name,
       email: user.email,
-      token: generateToken(user._id),
+      accessToken,
+      refreshToken,
     });
   } else {
     res.status(400);
@@ -86,11 +63,19 @@ const loginUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (user && (await bcrypt.compare(password, user.password))) {
+    // Generate new access and refresh tokens
+    const accessToken = generateAccessToken(user._id);
+    const refreshToken = generateRefreshToken(user._id);
+    // save the refresh token to user document
+    user.refreshToken = refreshToken;
+    await user.save();
+
     res.json({
       _id: user.id,
       name: user.name,
       email: user.email,
-      token: generateToken(user._id),
+      accessToken,
+      refreshToken,
     });
   } else {
     res.status(400);
@@ -106,9 +91,16 @@ const getMe = asyncHandler(async (req, res) => {
 });
 
 // Generate JWT
-const generateToken = (id) => {
+const generateAccessToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '30d',
+    expiresIn: '15m',
+  });
+};
+
+const generateRefreshToken = (id) => {
+  console.log('*******', id);
+  return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, {
+    expiresIn: '7d',
   });
 };
 
@@ -116,5 +108,6 @@ module.exports = {
   registerUser,
   loginUser,
   getMe,
-  newRegisterUser,
+  generateAccessToken,
+  generateRefreshToken,
 };

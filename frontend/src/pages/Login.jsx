@@ -1,19 +1,19 @@
-import { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { login, reset } from "../features/auth/authSlice";
-import Spinner from "../components/Spinner";
-import "../index.css";
-import { AiFillEye } from "react-icons/ai";
-import { AiOutlineEyeInvisible } from "react-icons/ai";
+import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { login, refreshToken, reset } from '../features/auth/authSlice';
+import Spinner from '../components/Spinner';
+import '../index.css';
+import { AiFillEye } from 'react-icons/ai';
+import { AiOutlineEyeInvisible } from 'react-icons/ai';
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   });
 
   const { email, password } = formData;
@@ -31,7 +31,8 @@ function Login() {
     }
 
     if (isSuccess || user) {
-      navigate("/");
+      dispatch(refreshToken());
+      navigate('/');
     }
 
     dispatch(reset());
@@ -73,7 +74,7 @@ function Login() {
               alt="google"
               className="img-fluid google__logo"
             />
-            {"  "}
+            {'  '}
             Sign in with Google
           </button>
         </div>
@@ -100,7 +101,7 @@ function Login() {
           <div className="form-group">
             <div className="input-group">
               <input
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? 'text' : 'password'}
                 className="form-control input__field"
                 id="password"
                 name="password"
@@ -123,7 +124,7 @@ function Login() {
           <div>
             Don't have an account?
             <Link to="/register" className="text-primary">
-              {" "}
+              {' '}
               Sign up
             </Link>
           </div>
