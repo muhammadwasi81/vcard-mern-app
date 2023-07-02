@@ -215,13 +215,11 @@ h3 {
 .input__field {
   border-radius: 20px !important;
   border: 5px solid var(--light) !important;
-  /* padding: 10px 20px !important; */
-  height: 20px;
+  height: 40px;
   outline: none !important;
   font-size: 14px !important;
   font-weight: 600 !important;
   color: var(--primary) !important;
-  min-width: 300px !important;
 }
 .input__field::placeholder {
   color: var(--primary) !important;
@@ -240,9 +238,11 @@ h3 {
 }
 .login__btn {
   background: var(--primary);
-  width: 300px;
+  width: 450px;
   border: none;
   outline: none;
+  transition: all 0.3s;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 .login__btn:hover {
   transform: scale(0.98);
@@ -253,11 +253,39 @@ h3 {
   font-weight: 600;
   color: var(--primary);
 }
+.input__select {
+  border-radius: 20px !important;
+  border: 5px solid var(--light) !important;
+  outline: none !important;
+  height: 40px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  color: var(--primary) !important;
+  width: 120px;
+}
 .vCard__wrapper {
+  width: 500px;
+}
+.delete__btn {
+  background: var(--danger);
+  color: var(--secondary);
+  border: none;
+  outline: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
+  cursor: pointer;
+  margin-top: 5px;
+}
+.phone__text {
+  display: flex;
+  justify-content: start;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-left: 0.4rem;
 }
 @media (max-width: 600px) {
   .google__btn {
@@ -267,6 +295,9 @@ h3 {
     width: 100% !important;
   }
   .login__btn {
+    width: 100% !important;
+  }
+  .vCard__wrapper {
     width: 100% !important;
   }
 }
