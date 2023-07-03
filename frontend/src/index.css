@@ -224,6 +224,7 @@ h3 {
 .input__field::placeholder {
   color: var(--primary) !important;
   font-weight: 600 !important;
+  text-align: center !important;
 }
 .eye__icon__container {
   position: relative;
@@ -282,10 +283,10 @@ h3 {
 }
 .phone__text {
   display: flex;
-  justify-content: start;
-  text-decoration: underline;
+  justify-content: center;
   cursor: pointer;
-  margin-left: 0.4rem;
+  color: var(--primary);
+  font-weight: 600;
 }
 @media (max-width: 600px) {
   .google__btn {
