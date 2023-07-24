@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { createCard } from '../features/cards/cardSlice';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { createCard, reset } from '../features/cards/cardSlice';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import Spinner from './Spinner';
@@ -10,14 +10,29 @@ import CustomLabel from './CustomLabel';
 
 function CardForm() {
   const dispatch = useDispatch();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [birthday, setBirthday] = useState('');
-  const [website, setWebsite] = useState('');
+  const { isSuccess, isLoading, message, isError } = useSelector(
+    (state) => state.cards
+  );
+
   const [uploading, setUploading] = useState(false);
-  const [image, setImage] = useState('');
   const [previewImg, setPreviewImg] = useState('');
   const [base64Image, setBase64Image] = useState('');
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    cardName: '',
+    website: '',
+    address: '',
+    notes: '',
+  });
+
+  const { firstName, lastName, cardName, email, website, address, notes } =
+    formData;
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   // phone number
   const [showPhoneSelect, setShowPhoneSelect] = useState(false);
@@ -30,6 +45,19 @@ function CardForm() {
   // occupation information
   const [showOccupationInput, setShowOccupationInput] = useState(false);
   const [occupations, setOccupations] = useState([]);
+
+  const [showEmailInput, setShowEmailInput] = useState(false);
+  const [emails, setEmails] = useState([]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success('Card created successfully');
+    }
+    if (isError) {
+      toast.error(message);
+    }
+    dispatch(reset());
+  }, [isSuccess]);
 
   const setSocialType = (value, index) => {
     const newSocialLinks = [...socialLinks];
@@ -75,6 +103,9 @@ function CardForm() {
   };
 
   const handleAddPhone = () => {
+    if (phoneNumbers.length >= 2) {
+      return toast.error('You can add only 2 phone numbers');
+    }
     setShowPhoneSelect(true);
     setPhoneNumbers([...phoneNumbers, { type: '', number: '' }]);
   };
@@ -99,35 +130,45 @@ function CardForm() {
 
   const handleAddOccupation = () => {
     setShowOccupationInput(true);
+    if (occupations.length > 1)
+      return toast.error('You can add only 1 occupations');
     setOccupations([
       ...occupations,
       { positionTitle: '', organizationName: '' },
     ]);
   };
 
+  const setEmail = (value, index) => {
+    const newEmails = [...emails];
+    newEmails[index].emailInput = value;
+    setEmails(newEmails);
+  };
+
+  const handleDeleteEmail = (index) => {
+    const newEmails = [...emails];
+    newEmails.splice(index, 1);
+    setEmails(newEmails);
+  };
+
+  const handleAddEmail = () => {
+    setShowEmailInput(true);
+    if (emails.length >= 2) return toast.error('You can add only 2 email');
+    setEmails([...emails, { emailInput: '' }]);
+  };
+
   const createPayload = () => {
     const payloadData = {
-      name,
-      email,
-      telephone: phoneNumbers,
-      occupation: occupations,
-      social: socialLinks,
-      website,
-      birthday,
+      ...formData,
       image: base64Image,
     };
     return payloadData;
   };
+
   const onSubmit = (e) => {
     e.preventDefault();
     const payload = createPayload();
     console.log(payload, 'payload');
-    // dispatch(createCard(payload));
-    setName('');
-    setEmail('');
-    setBirthday('');
-    setWebsite('');
-    setImage('');
+    dispatch(createCard(payload));
   };
 
   const uploadFileHandler = async (e) => {
@@ -157,7 +198,7 @@ function CardForm() {
             })
             .then((response) => {
               const { data } = response;
-              setImage(data.filename);
+              setFormData({ ...formData, image: data.filename });
               setBase64Image(base64data);
               setUploading(false);
               setPreviewImg({
@@ -184,7 +225,44 @@ function CardForm() {
 
   return (
     <section className="vCard__wrapper container">
+      {isLoading && <Spinner />}
       <form onSubmit={onSubmit}>
+        <div className="form-group mt-2">
+          <CustomLabel htmlFor="name" children="card name" />
+          <input
+            type="text"
+            name="cardName"
+            id="cardName"
+            value={cardName}
+            placeholder="Card Name"
+            className="form-control input__field"
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-group mt-2">
+          <CustomLabel htmlFor="firstName" children="first name" />
+          <input
+            type="text"
+            name="firstName"
+            id="firstName"
+            value={firstName}
+            placeholder="First Name"
+            className="form-control input__field"
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-group mt-2">
+          <CustomLabel htmlFor="lastName" children="last name" />
+          <input
+            type="text"
+            name="lastName"
+            id="lastName"
+            value={lastName}
+            placeholder="Last Name"
+            className="form-control input__field"
+            onChange={handleChange}
+          />
+        </div>
         <div className="imgUpload">
           <label htmlFor="imageInput" className="imgUploadLabel">
             <div className="imgUploadText">Upload Image</div>
@@ -203,42 +281,6 @@ function CardForm() {
             className="form-control-file"
           />
           {uploading && <Spinner />}
-        </div>
-        <div className="form-group mt-2">
-          <CustomLabel htmlFor="name" children="card name" />
-          <input
-            type="text"
-            name="text"
-            id="text"
-            value={name}
-            placeholder="Card Name"
-            className="form-control input__field"
-            onChange={(e) => setName(e.target.value)}
-          />
-        </div>
-        <div className="form-group mt-2">
-          <CustomLabel htmlFor="Fname" children="first name" />
-          <input
-            type="text"
-            name="fName"
-            id="text"
-            // value={fName}
-            placeholder="First Name"
-            className="form-control input__field"
-            // onChange={(e) => setFName(e.target.value)}
-          />
-        </div>
-        <div className="form-group mt-2">
-          <CustomLabel htmlFor="name" children="last name" />
-          <input
-            type="text"
-            name="lName"
-            id="lName"
-            // value={lName}
-            placeholder="Last Name"
-            className="form-control input__field"
-            // onChange={(e) => setLName(e.target.value)}
-          />
         </div>
         {/* phone number */}
         <div className="d-flex flex-column">
@@ -274,12 +316,14 @@ function CardForm() {
                     className="form-control input__field"
                     onChange={(e) => setPhoneNumber(e.target.value, index)}
                   />
-                  <button
-                    className="delete__btn"
-                    onClick={() => handleDeletePhone(index)}
-                  >
-                    x
-                  </button>
+                  {phoneNumbers.length > 1 && index > 0 && (
+                    <button
+                      className="delete__btn"
+                      onClick={() => handleDeletePhone(index)}
+                    >
+                      x
+                    </button>
+                  )}
                 </div>
               </React.Fragment>
             ))}
@@ -345,7 +389,7 @@ function CardForm() {
                     name="positionTitle"
                     id="positionTitle"
                     value={occupation.positionTitle}
-                    placeholder="Enter position title"
+                    placeholder="position"
                     className="form-control input__field w-25"
                     onChange={(e) => setPositionTitle(e.target.value, index)}
                   />
@@ -369,30 +413,37 @@ function CardForm() {
             ))}
         </div>
 
-        <div className="form-group">
-          <input
-            type="email"
-            name="text"
-            id="text"
-            value={email}
-            placeholder="Enter your Email"
-            className="form-control input__field"
-            onChange={(e) => setEmail(e.target.value)}
-          />
+        <div className="d-flex flex-column">
+          <div className="phone__text">
+            <span onClick={handleAddEmail}>Add Email</span>
+          </div>
+          {showEmailInput &&
+            emails.map((email, index) => (
+              <React.Fragment key={index}>
+                <div className="d-flex" style={{ justifyContent: 'start' }}>
+                  <CustomLabel htmlFor="Email" children="Email" />
+                </div>
+                <div className="d-flex">
+                  <input
+                    type="text"
+                    name="organizationName"
+                    id="organizationName"
+                    value={email.emailInput}
+                    placeholder="Enter email"
+                    className="form-control input__field"
+                    onChange={(e) => setEmail(e.target.value, index)}
+                  />
+                  <button
+                    className="delete__btn"
+                    onClick={() => handleDeleteEmail(index)}
+                  >
+                    x
+                  </button>
+                </div>
+              </React.Fragment>
+            ))}
         </div>
 
-        <div className="form-group">
-          <input
-            type="date"
-            name="date"
-            id="date"
-            value={birthday}
-            placeholder="Enter your Birthday"
-            className="form-control input__field"
-            onChange={(e) => setBirthday(e.target.value)}
-            autoFocus
-          />
-        </div>
         <div className="form-group">
           <input
             type="text"
@@ -402,10 +453,37 @@ function CardForm() {
             pattern="^(https?|ftp)://[^\s/$.?#].[^\s]*$"
             placeholder="Enter your Website"
             className="form-control input__field"
-            onChange={(e) => setWebsite(e.target.value)}
+            onChange={handleChange}
             autoFocus
           />
         </div>
+
+        <div className="form-group">
+          <textarea
+            type="text"
+            name="address"
+            id="address"
+            value={address}
+            placeholder="Enter your Address"
+            className="form-control textarea__field"
+            onChange={handleChange}
+            autoFocus
+          />
+        </div>
+
+        <div className="form-group">
+          <textarea
+            type="text"
+            name="notes"
+            id="notes"
+            value={notes}
+            placeholder="Enter your Notes"
+            className="form-control textarea__field"
+            onChange={handleChange}
+            autoFocus
+          />
+        </div>
+
         <div className="form-group">
           <button className="btn btn-primary login__btn" type="submit">
             Create

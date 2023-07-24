@@ -25,6 +25,8 @@ function Dashboard() {
 
     if (!user) {
       navigate('/');
+    } else {
+      toast.success('User Logged in Successfully');
     }
 
     return () => {
