@@ -40,7 +40,7 @@ function CardForm() {
 
   // social Links
   const [showSocialSelect, setShowSocialSelect] = useState(false);
-  const [socialLinks, setSocialLinks] = useState([{ type: '', link: '' }]);
+  const [socialLinks, setSocialLinks] = useState([]);
 
   // occupation information
   const [showOccupationInput, setShowOccupationInput] = useState(false);
@@ -49,9 +49,11 @@ function CardForm() {
   const [showEmailInput, setShowEmailInput] = useState(false);
   const [emails, setEmails] = useState([]);
 
+  console.log(socialLinks, 'socialLinks');
+  console.log(occupations, 'occupations');
   useEffect(() => {
     if (isSuccess) {
-      toast.success('Card created successfully');
+      // toast.success('Card created successfully');
     }
     if (isError) {
       toast.error(message);
@@ -78,7 +80,8 @@ function CardForm() {
     setSocialLinks(newSocialLinks);
   };
 
-  const handleAddSocial = () => {
+  const handleAddSocial = (event) => {
+    event.stopPropagation();
     console.log('handleAddSocial');
     setShowSocialSelect(true);
     setSocialLinks([...socialLinks, { type: '', link: '' }]);
@@ -239,6 +242,25 @@ function CardForm() {
             onChange={handleChange}
           />
         </div>
+        <div className="imgUpload">
+          <label htmlFor="imageInput" className="imgUploadLabel">
+            <div className="imgUploadText">Upload Image</div>
+            {previewImg && (
+              <div
+                className="imgPreview"
+                style={{ backgroundImage: `url(${previewImg.preview})` }}
+              />
+            )}
+          </label>
+          <input
+            id="imageInput"
+            type="file"
+            accept="image/*"
+            onChange={uploadFileHandler}
+            className="form-control-file"
+          />
+          {uploading && <Spinner />}
+        </div>
         <div className="form-group mt-2">
           <CustomLabel htmlFor="firstName" children="first name" />
           <input
@@ -263,25 +285,7 @@ function CardForm() {
             onChange={handleChange}
           />
         </div>
-        <div className="imgUpload">
-          <label htmlFor="imageInput" className="imgUploadLabel">
-            <div className="imgUploadText">Upload Image</div>
-            {previewImg && (
-              <div
-                className="imgPreview"
-                style={{ backgroundImage: `url(${previewImg.preview})` }}
-              />
-            )}
-          </label>
-          <input
-            id="imageInput"
-            type="file"
-            accept="image/*"
-            onChange={uploadFileHandler}
-            className="form-control-file"
-          />
-          {uploading && <Spinner />}
-        </div>
+
         {/* phone number */}
         <div className="d-flex flex-column">
           <div className="phone__text">
@@ -341,23 +345,21 @@ function CardForm() {
                   <CustomLabel htmlFor="social" children="Social" />
                 </div>
                 <div className="d-flex">
-                  <select
-                    className="form-select input__select"
+                  <input
+                    type="text"
+                    name="socialType"
+                    id="socialType"
+                    placeholder="social type"
+                    className="form-control input__field w-25"
                     value={link.type}
                     onChange={(e) => setSocialType(e.target.value, index)}
-                  >
-                    <option value="">Type</option>
-                    <option value="insta">Instagram</option>
-                    <option value="snap">Snapchat</option>
-                    <option value="twitter">Twitter</option>
-                    <option value="linkedin">LinkedIn</option>
-                  </select>
+                  />
                   <input
                     type="text"
                     name="socialLink"
                     id="socialLink"
                     value={link.link}
-                    placeholder="Enter social media link"
+                    placeholder="Enter your social type"
                     className="form-control input__field"
                     onChange={(e) => setSocialLink(e.target.value, index)}
                   />
