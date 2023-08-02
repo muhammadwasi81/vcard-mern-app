@@ -7,16 +7,19 @@ const cardSchema = mongoose.Schema(
       ref: 'User',
       required: false,
     },
-    name: {
+    firstName: {
       type: String,
       required: false,
     },
-    email: {
+    lastName: {
       type: String,
-      unique: true,
       required: false,
     },
-    telephone: {
+    address: {
+      type: String,
+      required: false,
+    },
+    cardName: {
       type: String,
       required: false,
     },
@@ -24,29 +27,62 @@ const cardSchema = mongoose.Schema(
       type: String,
       required: false,
     },
-    birthday: {
-      type: Date,
-      required: false,
-    },
     website: {
       type: String,
       required: false,
     },
-    snapchat: {
+    notes: {
       type: String,
       required: false,
     },
-    instagram: {
-      type: String,
-      required: false,
-    },
-    linkedin: {
-      type: String,
-      required: false,
-    },
+    occupations: [
+      {
+        positionTitle: {
+          type: String,
+          required: false,
+        },
+        organizationName: {
+          type: String,
+          required: false,
+        },
+      },
+    ],
+    phoneNumbers: [
+      {
+        type: {
+          type: String,
+          required: false,
+        },
+        number: {
+          type: String,
+          required: false,
+        },
+      },
+    ],
+    socialLinks: [
+      {
+        type: {
+          type: String,
+          required: false,
+        },
+        link: {
+          type: String,
+          required: false,
+        },
+      },
+    ],
+    emails: [
+      {
+        emailInput: {
+          type: String,
+          required: false,
+        },
+      },
+    ],
   },
   {
     timestamps: true,
   }
 );
+
 module.exports = mongoose.model('Card', cardSchema);

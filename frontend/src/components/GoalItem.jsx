@@ -4,9 +4,10 @@ import { updateCardById } from '../features/cards/cardSlice';
 import moment from 'moment';
 import { toast } from 'react-toastify';
 import UserCard from './UserCard';
+import { handleDownload } from '../utils/vCardDownload';
 
 function GoalItem({ user }) {
-  console.log(user, 'GoalItem');
+  console.log(user, 'userview');
   const dispatch = useDispatch();
   const [editMode, setEditMode] = useState(false);
   const [updatedUser, setUpdateUser] = useState(user);
@@ -36,31 +37,6 @@ function GoalItem({ user }) {
     dispatch(updateCardById({ payload }));
     setEditMode(false);
   };
-
-  const handleDownload = () => {
-    const imageBase64 = user.image.split(',')[1];
-    const vcard = `BEGIN:VCARD\nVERSION:3.0\nN:${user.name}\nTEL:${
-      user.telephone
-    }\nEMAIL:${user.email}\nURL:${user.website}\nBDAY:${new Date(user.birthday)
-      .toISOString()
-      .substring(
-        0,
-        10
-      )}\nPHOTO;TYPE=JPEG;ENCODING=BASE64:${imageBase64}\nX-SOCIALPROFILE;TYPE=linkedin:${
-      user.linkedin
-    }\nX-SOCIALPROFILE;TYPE=instagram:${
-      user.instagram
-    }\nX-SOCIALPROFILE;TYPE=snapchat:${user.snapchat}\nEND:VCARD`;
-    const blob = new Blob([vcard], { type: 'text/vcard' });
-    const link = document.createElement('a');
-    link.href = window.URL.createObjectURL(blob);
-    link.download = `${user.name}.vcf`;
-    link.click();
-  };
-
-  // useEffect(() => {
-  //   handleDownload();
-  // }, []);
 
   if (editMode) {
     return (
@@ -153,7 +129,7 @@ function GoalItem({ user }) {
   return (
     <UserCard
       user={user}
-      handleDownload={handleDownload}
+      handleDownload={() => handleDownload(user)}
       setEditMode={setEditMode}
     />
   );

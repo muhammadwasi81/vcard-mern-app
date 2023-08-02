@@ -58,7 +58,7 @@ const loginUser = asyncHandler(async (req, res) => {
   if (!user) {
     return res
       .status(400)
-      .send({ message: 'Email does not exist', status: false });
+      .send({ message: 'User does not exist', status: false });
   }
 
   if (user && (await bcrypt.compare(password, user.password))) {

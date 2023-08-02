@@ -20,15 +20,12 @@ function CardForm() {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
-    email: '',
     cardName: '',
-    website: '',
     address: '',
     notes: '',
   });
 
-  const { firstName, lastName, cardName, email, website, address, notes } =
-    formData;
+  const { firstName, lastName, cardName, website, address, notes } = formData;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -53,13 +50,21 @@ function CardForm() {
   console.log(occupations, 'occupations');
   useEffect(() => {
     if (isSuccess) {
-      // toast.success('Card created successfully');
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        cardName: '',
+        website: '',
+        address: '',
+        notes: '',
+      });
     }
     if (isError) {
       toast.error(message);
     }
-    dispatch(reset());
-  }, [isSuccess]);
+    // dispatch(reset());
+  }, [isSuccess, dispatch, isError, message]);
 
   const setSocialType = (value, index) => {
     const newSocialLinks = [...socialLinks];
@@ -162,6 +167,10 @@ function CardForm() {
   const createPayload = () => {
     const payloadData = {
       ...formData,
+      occupations,
+      phoneNumbers,
+      socialLinks,
+      emails,
       image: base64Image,
     };
     return payloadData;
@@ -320,14 +329,13 @@ function CardForm() {
                     className="form-control input__field"
                     onChange={(e) => setPhoneNumber(e.target.value, index)}
                   />
-                  {phoneNumbers.length > 1 && index > 0 && (
-                    <button
-                      className="delete__btn"
-                      onClick={() => handleDeletePhone(index)}
-                    >
-                      x
-                    </button>
-                  )}
+
+                  <button
+                    className="delete__btn"
+                    onClick={() => handleDeletePhone(index)}
+                  >
+                    x
+                  </button>
                 </div>
               </React.Fragment>
             ))}

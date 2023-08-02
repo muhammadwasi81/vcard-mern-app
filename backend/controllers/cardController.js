@@ -31,45 +31,49 @@ const getCardsForCurrentUser = asyncHandler(async (req, res) => {
 // @access  Private
 const createCard = asyncHandler(async (req, res) => {
   const {
-    name,
-    email,
-    telephone,
-    birthday,
-    website,
-    snapchat,
-    instagram,
-    linkedin,
     image,
+    website,
+    notes,
+    occupations,
+    phoneNumbers,
+    socialLinks,
+    emails,
+    firstName,
+    lastName,
+    address,
+    cardName,
   } = req.body;
 
   const userCards = await Card.find({ user: req.user._id });
-  console.log(userCards, 'userCards');
+
   if (userCards.length >= 3) {
     res
       .status(400)
-      .json({ message: 'You have reached the maximum number of cards' });
-    return;
-  }
-  const userExists = await Card.findOne({ email });
-  if (userExists) {
-    res.status(400).json({ message: 'User already exists' });
+      .json({
+        message: 'You have reached the maximum number of cards',
+        status: false,
+      });
     return;
   }
 
   const card = await Card.create({
-    name,
-    email,
-    telephone,
     image,
-    birthday: birthday || new Date(),
     website,
-    snapchat,
-    instagram,
-    linkedin,
+    notes,
+    occupations,
+    phoneNumbers,
+    socialLinks,
+    emails,
+    firstName,
+    lastName,
+    address,
+    cardName,
     user: req.user._id,
   });
-  // console.log(card, "createCard");
-  res.status(201).json({ message: 'Card Created Successfully', card });
+
+  res
+    .status(201)
+    .json({ message: 'Card Created Successfully', card, status: true });
 });
 
 // @desc    Update a card
