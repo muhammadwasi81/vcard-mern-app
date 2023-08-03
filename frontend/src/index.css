@@ -366,3 +366,8 @@ h3 {
   top: 0;
   left: 0;
 }
+.modal-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

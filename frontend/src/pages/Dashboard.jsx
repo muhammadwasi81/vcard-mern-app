@@ -1,44 +1,25 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import GoalItem from '../components/GoalItem';
 import Spinner from '../components/Spinner';
-import { getCardsForCurrentUser, reset } from '../features/cards/cardSlice';
+import { getAllCards } from '../features/cards/cardSlice';
 import { BiError } from 'react-icons/bi';
 import { toast } from 'react-toastify';
 import CardForm from '../components/CardForm';
 
 function Dashboard() {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const { user } = useSelector((state) => state.auth);
-  const { cards, isLoading, isError, message } = useSelector(
-    (state) => state.cards
-  );
-  console.log('singleUser data', cards);
-  useEffect(() => {
-    if (isError) {
-      toast.error(message);
-      console.log('error', isError);
-    }
-
-    if (!user) {
-      navigate('/');
-    }
-
-    return () => {
-      dispatch(reset());
-    };
-  }, [user, navigate, isError, message, dispatch]);
+  const { cards, isLoading } = useSelector((state) => state.cards);
+  console.log('All cards', cards);
 
   useEffect(() => {
-    dispatch(getCardsForCurrentUser(user?._id));
+    dispatch(getAllCards());
   }, []);
 
   if (isLoading) {
     return <Spinner />;
   }
+
   return (
     <>
       <CardForm />

@@ -3,32 +3,42 @@ const Card = require('../models/CardModel');
 
 // @desc    Get all cards
 // @route   GET /api/cards
-// @access  Private
+// @access  Public
 const getCards = asyncHandler(async (req, res) => {
-  const cards = await Card.find({ user: req.user._id });
-  // console.log(cards, "getCards");
-  res.status(200).json(cards);
-});
-
-const getCardsForCurrentUser = asyncHandler(async (req, res) => {
-  const userId = req.params.id;
-  console.log(userId, 'user id');
-  const cards = await Card.find({ user: userId }).sort({
+  const cards = await Card.find({}).sort({
     createdAt: -1,
     updatedAt: -1,
   });
-  console.log(cards, 'getCardsForCurrentUser');
-  if (cards) {
-    res.status(200).json(cards);
-  } else {
-    res.status(404);
-    throw new Error('Cards not found');
+  console.log(cards, 'getCards');
+  if (!cards) {
+    res.status(404).send({ message: 'Cards not found', status: false });
   }
+  return res.status(200).json({
+    message: 'Cards retrived successfully',
+    data: cards,
+    status: true,
+  });
+});
+
+const getCardsForCurrentUser = asyncHandler(async (req, res) => {
+  const { cardName } = req.params;
+  const cards = await Card.findOne({ cardName });
+  if (!cards) {
+    res
+      .status(200)
+      .send({ message: 'Cards not found', data: [], status: false });
+  }
+  console.log(cards, 'getCardsForCurrentUser');
+  return res.status(200).json({
+    message: 'Cards retrived successfully',
+    data: cards,
+    status: true,
+  });
 });
 
 // @desc    Create a card
 // @route   POST /api/cards
-// @access  Private
+// @access  Public
 const createCard = asyncHandler(async (req, res) => {
   const {
     image,
@@ -44,18 +54,6 @@ const createCard = asyncHandler(async (req, res) => {
     cardName,
   } = req.body;
 
-  const userCards = await Card.find({ user: req.user._id });
-
-  if (userCards.length >= 3) {
-    res
-      .status(400)
-      .json({
-        message: 'You have reached the maximum number of cards',
-        status: false,
-      });
-    return;
-  }
-
   const card = await Card.create({
     image,
     website,
@@ -68,9 +66,7 @@ const createCard = asyncHandler(async (req, res) => {
     lastName,
     address,
     cardName,
-    user: req.user._id,
   });
-
   res
     .status(201)
     .json({ message: 'Card Created Successfully', card, status: true });

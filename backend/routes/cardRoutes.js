@@ -1,20 +1,17 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const { protect } = require("../middleware/authMiddleware");
 const {
   getCards,
   createCard,
   updateCard,
   deleteCard,
   getCardsForCurrentUser,
-  // getCardById,
-} = require("../controllers/cardController");
+} = require('../controllers/cardController');
 
-router.get("/", protect, getCards);
-// router.get("/:id", protect, getCardById);
-router.get("/:id", protect, getCardsForCurrentUser);
-router.post("/", protect, createCard);
-router.put("/:id", protect, updateCard);
-router.delete("/:id", protect, deleteCard);
+router.get('/', getCards);
+router.get('/:cardName', getCardsForCurrentUser);
+router.post('/', createCard);
+router.put('/:id', updateCard);
+router.delete('/:id', deleteCard);
 
 module.exports = router;

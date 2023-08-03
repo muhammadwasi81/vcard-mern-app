@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { createCard, reset } from '../features/cards/cardSlice';
+import { createCard } from '../features/cards/cardSlice';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import Spinner from './Spinner';
 import imageCompression from 'browser-image-compression';
 import '../index.css';
 import CustomLabel from './CustomLabel';
+import { useNavigate } from 'react-router-dom';
 
 function CardForm() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isSuccess, isLoading, message, isError } = useSelector(
     (state) => state.cards
@@ -63,7 +65,6 @@ function CardForm() {
     if (isError) {
       toast.error(message);
     }
-    // dispatch(reset());
   }, [isSuccess, dispatch, isError, message]);
 
   const setSocialType = (value, index) => {
@@ -180,7 +181,9 @@ function CardForm() {
     e.preventDefault();
     const payload = createPayload();
     console.log(payload, 'payload');
-    dispatch(createCard(payload));
+    dispatch(createCard(payload)).then(() => {
+      navigate(`/card/${payload.cardName}`);
+    });
   };
 
   const uploadFileHandler = async (e) => {
