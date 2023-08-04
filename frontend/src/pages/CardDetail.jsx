@@ -2,20 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCardDetail } from '../features/cards/cardSlice';
 import { useParams } from 'react-router-dom';
-import QRCode from 'qrcode.react'; 
+import QRCode from 'qrcode.react';
 import Spinner from '../components/Spinner';
-import { FaDownload, FaQrcode, FaNote, FaMapMarker, FaGlobe, FaPhone } from 'react-icons/fa';
 import { Modal } from 'react-bootstrap';
 import {
-  FaQrcode,
-  FaDownload,
-  FaPhone,
   FaEnvelope,
   FaGlobe,
   FaBuilding,
   FaNotesMedical,
   FaInstagram,
   FaFacebook,
+  FaPhone,
+  FaStickyNote,
+  FaMapMarker,
+  FaQrcode,
+  FaDownload,
 } from 'react-icons/fa';
 import { AiFillHome } from 'react-icons/ai';
 
@@ -101,19 +102,19 @@ const CardDetail = () => {
         <div className="row">
           <div className="col-sm-4">
             {CardDetail?.image && (
-           <img
-              src={CardDetail?.image}
-              style={{
-                width: '100%',
-                height: '35%',
-                borderRadius: '50%',
-                border: '1px solid #ccc',
-                cursor: 'pointer',
-              }}
-              alt={CardDetail?.name}
-              className="img-fluid"
-            />
-          )}
+              <img
+                src={CardDetail?.image}
+                style={{
+                  width: '100%',
+                  height: '35%',
+                  borderRadius: '50%',
+                  border: '1px solid #ccc',
+                  cursor: 'pointer',
+                }}
+                alt={CardDetail?.name}
+                className="img-fluid"
+              />
+            )}
             <h4 className="mt-2">{CardDetail?.cardName}</h4>
             {CardDetail?.occupations?.map((x, i) => (
               <p key={i}>
@@ -152,25 +153,24 @@ const CardDetail = () => {
             <p>{CardDetail?.occupations?.map((x) => x?.organizationName)}</p>
             {CardDetail?.notes && (
               <p>
-              <FaNote /> {CardDetail?.notes}
-            </p>
+                <FaStickyNote /> {CardDetail?.notes}
+              </p>
             )}
             {CardDetail?.address && (
               <p>
                 <FaMapMarker /> {CardDetail?.address}
               </p>
-            )}   
-           {CardDetail?.website && (
+            )}
+            {CardDetail?.website && (
               <p>
-              <FaGlobe /> {CardDetail?.website}
-            </p>
-           )}
-           {CardDetail?.phone && (
+                <FaGlobe /> {CardDetail?.website}
+              </p>
+            )}
+            {CardDetail?.phone && (
               <p>
                 <FaPhone /> {CardDetail?.phone}
               </p>
             )}
-
           </div>
           <div className="col-sm-8">
             <h1>VCardLink</h1>
