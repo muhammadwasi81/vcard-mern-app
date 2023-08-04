@@ -30,6 +30,7 @@ const CardDetail = () => {
 
   const handleDownload = () => {
     const {
+      image,
       firstName,
       lastName,
       address,
@@ -42,6 +43,10 @@ const CardDetail = () => {
     } = CardDetail;
 
     let vCardData = `BEGIN:VCARD\nVERSION:3.0\nN:${lastName};${firstName};;;\nFN:${firstName} ${lastName}\n`;
+
+    if (image) {
+      vCardData += `PHOTO;ENCODING=b;TYPE=JPEG:${image.split(',')[1]}\n`;
+    }
 
     if (occupations && occupations[0]) {
       vCardData += `ORG:${occupations[0].organizationName}\nTITLE:${occupations[0].positionTitle}\n`;
