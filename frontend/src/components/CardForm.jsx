@@ -15,53 +15,28 @@ function CardForm() {
   const { isSuccess, isLoading, message, isError } = useSelector(
     (state) => state.cards
   );
-
   const [uploading, setUploading] = useState(false);
   const [previewImg, setPreviewImg] = useState('');
   const [base64Image, setBase64Image] = useState('');
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    cardName: '',
-    address: '',
-    notes: '',
-  });
-
-  const { firstName, lastName, cardName, website, address, notes } = formData;
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  // phone number
   const [showPhoneSelect, setShowPhoneSelect] = useState(false);
   const [phoneNumbers, setPhoneNumbers] = useState([]);
-
-  // social Links
   const [showSocialSelect, setShowSocialSelect] = useState(false);
   const [socialLinks, setSocialLinks] = useState([]);
-
-  // occupation information
   const [showOccupationInput, setShowOccupationInput] = useState(false);
   const [occupations, setOccupations] = useState([]);
-
   const [showEmailInput, setShowEmailInput] = useState(false);
   const [emails, setEmails] = useState([]);
+  const [cardName, setCardName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [address, setAddress] = useState('');
+  const [notes, setNotes] = useState('');
+  const [image, setImage] = useState('');
+  const [website, setWebsite] = useState('');
 
-  console.log(socialLinks, 'socialLinks');
-  console.log(occupations, 'occupations');
+  // console.log(socialLinks, 'socialLinks');
+  // console.log(occupations, 'occupations');
   useEffect(() => {
-    if (isSuccess) {
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        cardName: '',
-        website: '',
-        address: '',
-        notes: '',
-      });
-    }
     if (isError) {
       toast.error(message);
     }
@@ -167,7 +142,11 @@ function CardForm() {
 
   const createPayload = () => {
     const payloadData = {
-      ...formData,
+      cardName,
+      firstName,
+      lastName,
+      address,
+      notes,
       occupations,
       phoneNumbers,
       socialLinks,
@@ -182,7 +161,7 @@ function CardForm() {
     const payload = createPayload();
     console.log(payload, 'payload');
     dispatch(createCard(payload)).then(() => {
-      navigate(`/card/${payload.cardName}`);
+      navigate(`/card/${cardName}`);
     });
   };
 
@@ -213,7 +192,7 @@ function CardForm() {
             })
             .then((response) => {
               const { data } = response;
-              setFormData({ ...formData, image: data.filename });
+              setImage(data.filename);
               setBase64Image(base64data);
               setUploading(false);
               setPreviewImg({
@@ -251,7 +230,7 @@ function CardForm() {
             value={cardName}
             placeholder="Card Name"
             className="form-control input__field"
-            onChange={handleChange}
+            onChange={(e) => setCardName(e.target.value)}
           />
         </div>
         <div className="imgUpload">
@@ -282,7 +261,7 @@ function CardForm() {
             value={firstName}
             placeholder="First Name"
             className="form-control input__field"
-            onChange={handleChange}
+            onChange={(e) => setFirstName(e.target.value)}
           />
         </div>
         <div className="form-group mt-2">
@@ -294,7 +273,7 @@ function CardForm() {
             value={lastName}
             placeholder="Last Name"
             className="form-control input__field"
-            onChange={handleChange}
+            onChange={(e) => setLastName(e.target.value)}
           />
         </div>
 
@@ -343,7 +322,6 @@ function CardForm() {
               </React.Fragment>
             ))}
         </div>
-
         {/*  Social links */}
         <div className="d-flex flex-column">
           <div className="phone__text my-2">
@@ -384,7 +362,6 @@ function CardForm() {
               </React.Fragment>
             ))}
         </div>
-
         {/* Occupation */}
         <div className="d-flex flex-column">
           <div className="phone__text">
@@ -425,7 +402,7 @@ function CardForm() {
               </React.Fragment>
             ))}
         </div>
-
+        {/* email */}
         <div className="d-flex flex-column">
           <div className="phone__text">
             <span onClick={handleAddEmail}>Add Email</span>
@@ -456,7 +433,6 @@ function CardForm() {
               </React.Fragment>
             ))}
         </div>
-
         <div className="form-group">
           <input
             type="text"
@@ -466,11 +442,10 @@ function CardForm() {
             pattern="^(https?|ftp)://[^\s/$.?#].[^\s]*$"
             placeholder="Enter your Website"
             className="form-control input__field"
-            onChange={handleChange}
+            onChange={(e) => setWebsite(e.target.value)}
             autoFocus
           />
         </div>
-
         <div className="form-group">
           <textarea
             type="text"
@@ -479,11 +454,10 @@ function CardForm() {
             value={address}
             placeholder="Enter your Address"
             className="form-control textarea__field"
-            onChange={handleChange}
+            onChange={(e) => setAddress(e.target.value)}
             autoFocus
           />
         </div>
-
         <div className="form-group">
           <textarea
             type="text"
@@ -492,14 +466,17 @@ function CardForm() {
             value={notes}
             placeholder="Enter your Notes"
             className="form-control textarea__field"
-            onChange={handleChange}
+            onChange={(e) => setNotes(e.target.value)}
             autoFocus
           />
         </div>
-
         <div className="form-group">
-          <button className="btn btn-primary login__btn" type="submit">
-            Create
+          <button
+            className="btn btn-primary login__btn"
+            type="submit"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Loading...' : 'Create'}
           </button>
         </div>
       </form>
