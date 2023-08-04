@@ -6,6 +6,18 @@ import QRCode from 'qrcode.react';
 import Spinner from '../components/Spinner';
 import { FaDownload, FaQrcode, FaNote, FaMapMarker, FaGlobe, FaPhone } from 'react-icons/fa';
 import { Modal } from 'react-bootstrap';
+import {
+  FaQrcode,
+  FaDownload,
+  FaPhone,
+  FaEnvelope,
+  FaGlobe,
+  FaBuilding,
+  FaNotesMedical,
+  FaInstagram,
+  FaFacebook,
+} from 'react-icons/fa';
+import { AiFillHome } from 'react-icons/ai';
 
 const CardDetail = () => {
   const { name } = useParams();
@@ -18,21 +30,74 @@ const CardDetail = () => {
   const handleShow = () => setShowModal(true);
 
   const handleDownload = () => {
-    // TODO: implement vCard download logic here
-    console.log('Download button clicked');
+    const {
+      image,
+      firstName,
+      lastName,
+      address,
+      occupations,
+      phoneNumbers,
+      socialLinks,
+      emails,
+      website,
+      notes,
+    } = CardDetail;
+
+    let vCardData = `BEGIN:VCARD\nVERSION:3.0\nN:${lastName};${firstName};;;\nFN:${firstName} ${lastName}\n`;
+
+    if (image) {
+      vCardData += `PHOTO;ENCODING=b;TYPE=JPEG:${image.split(',')[1]}\n`;
+    }
+
+    if (occupations && occupations[0]) {
+      vCardData += `ORG:${occupations[0].organizationName}\nTITLE:${occupations[0].positionTitle}\n`;
+    }
+
+    if (phoneNumbers && phoneNumbers[0]) {
+      vCardData += `TEL;TYPE=WORK,VOICE:${phoneNumbers[0].number}\n`;
+    }
+
+    if (emails && emails[0]) {
+      vCardData += `EMAIL;TYPE=INTERNET:${emails[0].emailInput}\n`;
+    }
+
+    vCardData += `ADR;TYPE=HOME:;;${address};;;;\n`;
+
+    if (website) {
+      vCardData += `URL:${website}\n`;
+    }
+
+    if (notes) {
+      vCardData += `NOTE:${notes}\n`;
+    }
+
+    if (socialLinks && socialLinks[0]) {
+      vCardData += `X-SOCIALPROFILE:${socialLinks[0].link}\n`;
+    }
+
+    vCardData += 'END:VCARD';
+
+    const vCardBlob = new Blob([vCardData], {
+      type: 'text/vcard;charset=utf-8;',
+    });
+
+    const url = window.URL.createObjectURL(vCardBlob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${firstName}_${lastName}.vcf`;
+    link.click();
   };
 
   useEffect(() => {
     dispatch(getCardDetail(name));
   }, [name, dispatch]);
 
-  if (isLoading) {
-    return <Spinner />;
-  }
+  if (isLoading) return <Spinner />;
 
   return (
-    <div style={{ marginTop: '100px' }}>
-      <div className="container">
+    <>
+      <div className="container" style={{ marginTop: '30px' }}>
         <div className="row">
           <div className="col-sm-4">
             {CardDetail?.image && (
@@ -40,6 +105,7 @@ const CardDetail = () => {
               src={CardDetail?.image}
               style={{
                 width: '100%',
+                height: '35%',
                 borderRadius: '50%',
                 border: '1px solid #ccc',
                 cursor: 'pointer',
@@ -49,6 +115,40 @@ const CardDetail = () => {
             />
           )}
             <h4 className="mt-2">{CardDetail?.cardName}</h4>
+            {CardDetail?.occupations?.map((x, i) => (
+              <p key={i}>
+                <FaBuilding size={25} /> {x?.organizationName}
+              </p>
+            ))}
+            {CardDetail?.phoneNumbers?.map((phone, i) => (
+              <p key={i}>
+                <FaPhone size={25} /> {phone?.number}
+              </p>
+            ))}
+            {CardDetail?.emails?.map((email, i) => (
+              <p key={i}>
+                <FaEnvelope size={25} /> {email?.emailInput}
+              </p>
+            ))}
+            {CardDetail?.socialLinks?.map((social, i) => (
+              <p key={i}>
+                {social?.type === 'insta' ? (
+                  <FaInstagram size={25} />
+                ) : social?.type === 'facebook' ? (
+                  <FaFacebook size={25} />
+                ) : null}{' '}
+                {social?.link}
+              </p>
+            ))}
+            <p>
+              <AiFillHome size={25} /> {CardDetail?.address}
+            </p>
+            <p>
+              <FaGlobe size={25} /> {CardDetail?.website}
+            </p>
+            <p>
+              <FaNotesMedical size={25} /> {CardDetail?.notes}
+            </p>
             <p>{CardDetail?.occupations?.map((x) => x?.organizationName)}</p>
             {CardDetail?.notes && (
               <p>
@@ -70,6 +170,7 @@ const CardDetail = () => {
                 <FaPhone /> {CardDetail?.phone}
               </p>
             )}
+
           </div>
           <div className="col-sm-8">
             <h1>VCardLink</h1>
@@ -100,11 +201,11 @@ const CardDetail = () => {
           <QRCode
             size={256}
             className="m-auto w-75 h-75"
-            value={`https://vcard-app.onrender.com/card/${CardDetail?.cardName}`}
+            value={`https://vcard-app.onrender.com/card/${CardDetail.cardName}`}
           />
         </Modal.Body>
       </Modal>
-    </div>
+    </>
   );
 };
 
