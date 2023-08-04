@@ -67,17 +67,6 @@ const CardDetail = () => {
             </div>
           </div>
         </div>
-        <Modal show={showModal} onHide={handleClose}>
-          <Modal.Header closeButton>
-            <Modal.Title>QR Code</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <QRCode
-              size={256}
-              value={`https://vcard-app.onrender.com/${CardDetail.cardName}`}
-            />
-          </Modal.Body>
-        </Modal>
       </div>
       <Modal show={showModal} onHide={handleClose}>
         <Modal.Header closeButton>
@@ -87,7 +76,7 @@ const CardDetail = () => {
           <QRCode
             size={256}
             className="m-auto w-75 h-75"
-            value={`https://vcard-app.onrender.com/${CardDetail.cardName}`}
+            value={`https://vcard-app.onrender.com/card/${CardDetail.cardName}`}
           />
         </Modal.Body>
       </Modal>
