@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCardDetail } from '../features/cards/cardSlice';
 import { useParams } from 'react-router-dom';
-import QRCode from 'qrcode.react'; // import the QRCode library
+import QRCode from 'qrcode.react'; 
 import Spinner from '../components/Spinner';
-import { FaDownload, FaQrcode } from 'react-icons/fa';
+import { FaDownload, FaQrcode, FaNote, FaMapMarker, FaGlobe, FaPhone } from 'react-icons/fa';
 import { Modal } from 'react-bootstrap';
 
 const CardDetail = () => {
@@ -35,8 +35,9 @@ const CardDetail = () => {
       <div className="container">
         <div className="row">
           <div className="col-sm-4">
-            <img
-              src={CardDetail?.image || 'https://vcard.link/avatar/DcUd'}
+            {CardDetail?.image && (
+           <img
+              src={CardDetail?.image}
               style={{
                 width: '100%',
                 borderRadius: '50%',
@@ -46,8 +47,29 @@ const CardDetail = () => {
               alt={CardDetail?.name}
               className="img-fluid"
             />
+          )}
             <h4 className="mt-2">{CardDetail?.cardName}</h4>
             <p>{CardDetail?.occupations?.map((x) => x?.organizationName)}</p>
+            {CardDetail?.notes && (
+              <p>
+              <FaNote /> {CardDetail?.notes}
+            </p>
+            )}
+            {CardDetail?.address && (
+              <p>
+                <FaMapMarker /> {CardDetail?.address}
+              </p>
+            )}   
+           {CardDetail?.website && (
+              <p>
+              <FaGlobe /> {CardDetail?.website}
+            </p>
+           )}
+           {CardDetail?.phone && (
+              <p>
+                <FaPhone /> {CardDetail?.phone}
+              </p>
+            )}
           </div>
           <div className="col-sm-8">
             <h1>VCardLink</h1>
@@ -57,6 +79,7 @@ const CardDetail = () => {
                 onClick={handleShow}
                 style={{ marginRight: '10px', cursor: 'pointer' }}
               />
+              <span>Scan</span>
               <FaDownload
                 size={32}
                 onClick={handleDownload}
@@ -64,20 +87,10 @@ const CardDetail = () => {
                   cursor: 'pointer',
                 }}
               />
+              <span>Save</span>
             </div>
           </div>
         </div>
-        <Modal show={showModal} onHide={handleClose}>
-          <Modal.Header closeButton>
-            <Modal.Title>QR Code</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <QRCode
-              size={256}
-              value={`https://vcard-app.onrender.com/${CardDetail.cardName}`}
-            />
-          </Modal.Body>
-        </Modal>
       </div>
       <Modal show={showModal} onHide={handleClose}>
         <Modal.Header closeButton>
@@ -87,7 +100,7 @@ const CardDetail = () => {
           <QRCode
             size={256}
             className="m-auto w-75 h-75"
-            value={`https://vcard-app.onrender.com/${CardDetail.cardName}`}
+            value={`https://vcard-app.onrender.com/card/${CardDetail?.cardName}`}
           />
         </Modal.Body>
       </Modal>
