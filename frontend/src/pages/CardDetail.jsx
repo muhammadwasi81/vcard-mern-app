@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCardDetail } from '../features/cards/cardSlice';
 import { useParams } from 'react-router-dom';
-import QRCode from 'qrcode.react';
+import QRCode from 'qrcode.react'; 
 import Spinner from '../components/Spinner';
+import { FaDownload, FaQrcode, FaNote, FaMapMarker, FaGlobe, FaPhone } from 'react-icons/fa';
 import { Modal } from 'react-bootstrap';
 import {
   FaQrcode,
@@ -99,8 +100,9 @@ const CardDetail = () => {
       <div className="container" style={{ marginTop: '30px' }}>
         <div className="row">
           <div className="col-sm-4">
-            <img
-              src={CardDetail?.image || 'https://vcard.link/avatar/DcUd'}
+            {CardDetail?.image && (
+           <img
+              src={CardDetail?.image}
               style={{
                 width: '100%',
                 height: '35%',
@@ -111,6 +113,7 @@ const CardDetail = () => {
               alt={CardDetail?.name}
               className="img-fluid"
             />
+          )}
             <h4 className="mt-2">{CardDetail?.cardName}</h4>
             {CardDetail?.occupations?.map((x, i) => (
               <p key={i}>
@@ -146,6 +149,28 @@ const CardDetail = () => {
             <p>
               <FaNotesMedical size={25} /> {CardDetail?.notes}
             </p>
+            <p>{CardDetail?.occupations?.map((x) => x?.organizationName)}</p>
+            {CardDetail?.notes && (
+              <p>
+              <FaNote /> {CardDetail?.notes}
+            </p>
+            )}
+            {CardDetail?.address && (
+              <p>
+                <FaMapMarker /> {CardDetail?.address}
+              </p>
+            )}   
+           {CardDetail?.website && (
+              <p>
+              <FaGlobe /> {CardDetail?.website}
+            </p>
+           )}
+           {CardDetail?.phone && (
+              <p>
+                <FaPhone /> {CardDetail?.phone}
+              </p>
+            )}
+
           </div>
           <div className="col-sm-8">
             <h1>VCardLink</h1>
@@ -155,6 +180,7 @@ const CardDetail = () => {
                 onClick={handleShow}
                 style={{ marginRight: '10px', cursor: 'pointer' }}
               />
+              <span>Scan</span>
               <FaDownload
                 size={32}
                 onClick={handleDownload}
@@ -162,6 +188,7 @@ const CardDetail = () => {
                   cursor: 'pointer',
                 }}
               />
+              <span>Save</span>
             </div>
           </div>
         </div>
