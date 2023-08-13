@@ -1,87 +1,105 @@
 const asyncHandler = require('express-async-handler');
 const Card = require('../models/CardModel');
-const User = require('../models/userModel');
 
 // @desc    Get all cards
 // @route   GET /api/cards
-// @access  Private
+// @access  Public
 const getCards = asyncHandler(async (req, res) => {
-  const cards = await Card.find({ user: req.user._id });
-  //console.log(cards, "getCards");
-  res.status(200).json(cards);
+  const cards = await Card.find({}).sort({
+    createdAt: -1,
+    updatedAt: -1,
+  });
+  console.log(cards, 'getCards');
+  if (!cards) {
+    res.status(404).send({ message: 'Cards not found', status: false });
+  }
+  return res.status(200).json({
+    message: 'Cards retrived successfully',
+    data: cards,
+    status: true,
+  });
 });
 
 const getCardsForCurrentUser = asyncHandler(async (req, res) => {
-  const userId = req.params.id;
-  console.log(userId, 'user id');
-  const cards = await Card.find({ user: userId });
+  const { cardName } = req.params;
+  const cards = await Card.findOne({ cardName });
+  if (!cards) {
+    res
+      .status(200)
+      .send({ message: 'Cards not found', data: [], status: false });
+  }
   console.log(cards, 'getCardsForCurrentUser');
-  if (cards) {
-    res.status(200).json(cards);
-  } else {
-    res.status(404);
-    throw new Error('Cards not found');
+  return res.status(200).json({
+    message: 'Cards retrived successfully',
+    data: cards,
+    status: true,
+  });
+});
+
+const getCardsByUserId = asyncHandler(async (req, res) => {
+  try {
+    const { userId } = req.params;
+    console.log(userId, 'userId');
+
+    // Find cards based on the user's ID
+    const cards = await Card.find({ user: userId });
+    console.log(cards, 'getCardsByUserId');
+
+    // Check if any cards were found
+    if (!cards || cards.length === 0) {
+      return res
+        .status(404)
+        .json({ message: 'Cards not found', status: false });
+    }
+
+    // Send the retrieved cards as a response
+    return res.status(200).json({
+      message: 'Cards retrieved successfully',
+      data: cards,
+      status: true,
+    });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: 'Internal Server Error', status: false });
   }
 });
 
 // @desc    Create a card
 // @route   POST /api/cards
-// @access  Private
+// @access  Public
 const createCard = asyncHandler(async (req, res) => {
   const {
-    name,
-    email,
-    telephone,
-    birthday,
-    website,
-    snapchat,
-    instagram,
-    linkedin,
     image,
+    website,
+    notes,
+    occupations,
+    phoneNumbers,
+    socialLinks,
+    emails,
+    firstName,
+    lastName,
+    address,
+    cardName,
   } = req.body;
-  if (
-    !name ||
-    !email ||
-    !telephone ||
-    !birthday ||
-    !website ||
-    !snapchat ||
-    !instagram ||
-    !linkedin ||
-    !image
-  ) {
-    res.status(400).json({ message: 'Please fill in all fields' });
-    return;
-  }
-
-  const userCards = await Card.find({ user: req.user._id });
-  console.log(userCards, 'userCards');
-  if (userCards.length >= 3) {
-    res
-      .status(400)
-      .json({ message: 'You have reached the maximum number of cards' });
-    return;
-  }
-  const userExists = await Card.findOne({ email });
-  if (userExists) {
-    res.status(400).json({ message: 'User already exists' });
-    return;
-  }
 
   const card = await Card.create({
-    name,
-    email,
-    telephone,
     image,
-    birthday,
     website,
-    snapchat,
-    instagram,
-    linkedin,
-    user: req.user._id,
+    notes,
+    occupations,
+    phoneNumbers,
+    socialLinks,
+    emails,
+    firstName,
+    lastName,
+    address,
+    cardName,
   });
-  // console.log(card, "createCard");
-  res.status(201).json({ message: 'Card Created Successfully', card });
+  res
+    .status(201)
+    .json({ message: 'Card Created Successfully', card, status: true });
 });
 
 // @desc    Update a card
@@ -89,48 +107,42 @@ const createCard = asyncHandler(async (req, res) => {
 // @access  Private
 const updateCard = asyncHandler(async (req, res) => {
   const {
-    name,
-    email,
-    telephone,
     image,
-    birthday,
     website,
-    snapchat,
-    instagram,
-    linkedin,
+    notes,
+    occupations,
+    phoneNumbers,
+    socialLinks,
+    emails,
+    firstName,
+    lastName,
+    address,
+    cardName,
   } = req.body;
-  if (
-    !name ||
-    !email ||
-    !telephone ||
-    !image ||
-    !birthday ||
-    !website ||
-    !snapchat ||
-    !instagram ||
-    !linkedin
-  ) {
-    res.status(400).send('Please fill out all fields');
-    throw new Error('Please fill out all fields');
-  }
+
   const card = await Card.findById(req.params.id);
   if (card) {
-    card.name = name;
-    card.email = email;
-    card.telephone = telephone;
     card.image = image;
-    card.birthday = birthday;
     card.website = website;
-    card.snapchat = snapchat;
-    card.instagram = instagram;
-    card.linkedin = linkedin;
+    card.notes = notes;
+    card.occupations = occupations;
+    card.phoneNumbers = phoneNumbers;
+    card.socialLinks = socialLinks;
+    card.emails = emails;
+    card.firstName = firstName;
+    card.lastName = lastName;
+    card.address = address;
+    card.cardName = cardName;
 
     const updatedCard = await card.save();
-    // console.log(updatedCard, "updateCard");
-    res.status(200).json({ message: 'Card Updated Successfully', updatedCard });
+    console.log(updatedCard, 'updateCard');
+    res.status(200).json({
+      message: 'Card Updated Successfully',
+      updatedCard,
+      status: true,
+    });
   } else {
-    res.status(404);
-    throw new Error('Card not found');
+    res.status(404).send({ message: 'Card not found', status: false });
   }
 });
 
@@ -142,10 +154,11 @@ const deleteCard = asyncHandler(async (req, res) => {
   if (card) {
     await card.remove();
     // console.log("deleteCard");
-    res.status(200).json({ message: 'Card removed' });
+    res
+      .status(200)
+      .json({ message: 'Card removed successfully', status: true });
   } else {
-    res.status(404);
-    throw new Error('Card not found');
+    res.status(404).send({ message: 'Card not found', status: false });
   }
 });
 
@@ -155,4 +168,5 @@ module.exports = {
   createCard,
   updateCard,
   deleteCard,
+  getCardsByUserId,
 };

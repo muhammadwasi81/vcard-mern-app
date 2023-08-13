@@ -36,16 +36,13 @@ const registerUser = asyncHandler(async (req, res) => {
   if (user) {
     // Generate access and refresh tokens
     const accessToken = generateAccessToken(user._id);
-    const refreshToken = generateRefreshToken(user._id);
 
-    user.refreshToken = refreshToken;
     await user.save();
     res.status(201).json({
       _id: user.id,
       name: user.name,
       email: user.email,
       accessToken,
-      refreshToken,
     });
   } else {
     res.status(400);
@@ -63,11 +60,8 @@ const loginUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (user && (await bcrypt.compare(password, user.password))) {
-    // Generate new access and refresh tokens
     const accessToken = generateAccessToken(user._id);
-    const refreshToken = generateRefreshToken(user._id);
-    // save the refresh token to user document
-    user.refreshToken = refreshToken;
+
     await user.save();
 
     res.json({
@@ -75,7 +69,6 @@ const loginUser = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       accessToken,
-      refreshToken,
     });
   } else {
     res.status(400);
@@ -97,17 +90,9 @@ const generateAccessToken = (id) => {
   });
 };
 
-const generateRefreshToken = (id) => {
-  console.log('*******', id);
-  return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, {
-    expiresIn: '7d',
-  });
-};
-
 module.exports = {
   registerUser,
   loginUser,
   getMe,
   generateAccessToken,
-  generateRefreshToken,
 };

@@ -1,13 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import cardService from './cardService';
 
-/// Create new goal
 export const createCard = createAsyncThunk(
-  'goals/create',
+  'cards/create',
   async (cardData, thunkAPI) => {
     try {
-      const token = thunkAPI.getState().auth.user.token;
-      return await cardService.createCard(cardData, token);
+      return await cardService.createCard(cardData);
     } catch (error) {
       const message =
         (error.response &&
@@ -20,13 +18,11 @@ export const createCard = createAsyncThunk(
   }
 );
 
-// Get user goals
-export const getCards = createAsyncThunk(
-  'goals/getAll',
+export const getAllCards = createAsyncThunk(
+  'cards/getAll',
   async (_, thunkAPI) => {
     try {
-      const token = thunkAPI.getState().auth.user.token;
-      return await cardService.getAllCards(token);
+      return await cardService.getAllCardService();
     } catch (error) {
       const message =
         (error.response &&
@@ -39,13 +35,11 @@ export const getCards = createAsyncThunk(
   }
 );
 
-// Get user goal by id
-export const getCardsForCurrentUser = createAsyncThunk(
-  'goals/getById',
-  async (id, thunkAPI) => {
+export const getCardByIdAction = createAsyncThunk(
+  'cards/getCardById',
+  async (payload, thunkAPI) => {
     try {
-      const token = thunkAPI.getState().auth.user.token;
-      return await cardService.getCardsForCurrentUser(id, token);
+      return await cardService.getCardById(payload);
     } catch (error) {
       const message =
         (error.response &&
@@ -58,14 +52,29 @@ export const getCardsForCurrentUser = createAsyncThunk(
   }
 );
 
-// Delete user goal
+export const getCardDetail = createAsyncThunk(
+  'cards/getCardByName',
+  async (payload, thunkAPI) => {
+    try {
+      return await cardService.getCardDetailService(payload);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const deleteCardById = createAsyncThunk(
-  'goals/delete',
+  'cards/delete',
   async (_id, thunkAPI) => {
     console.log('id', _id);
     try {
-      const token = thunkAPI.getState().auth.user.token;
-      return await cardService.deleteCardById(_id, token);
+      return await cardService.deleteCardById(_id);
     } catch (error) {
       const message =
         (error.response &&
@@ -78,13 +87,11 @@ export const deleteCardById = createAsyncThunk(
   }
 );
 
-// Update user goal
 export const updateCardById = createAsyncThunk(
-  'goals/update',
+  'cards/update',
   async ({ payload }, thunkAPI) => {
     try {
-      const token = thunkAPI.getState().auth.user.token;
-      return await cardService.updateCardById(payload.id, payload, token);
+      return await cardService.updateCardById(payload.id);
     } catch (error) {
       const message =
         (error.response &&
@@ -99,7 +106,7 @@ export const updateCardById = createAsyncThunk(
 
 const initialState = {
   cards: [],
-  card: {},
+  CardDetail: {},
   isLoading: false,
   isError: false,
   isSuccess: false,
@@ -121,25 +128,17 @@ const cardSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(getCards.pending, (state) => {
-      state.isLoading = true;
-      state.isError = false;
-      state.isSuccess = false;
-    });
     builder
-      .addCase(getCardsForCurrentUser.pending, (state) => {
+      .addCase(getAllCards.pending, (state) => {
         state.isLoading = true;
-        state.isError = false;
-        state.isSuccess = false;
       })
-      .addCase(getCardsForCurrentUser.fulfilled, (state, action) => {
-        console.log('getCardsForCurrentUser', action.payload);
-        state.isLoading = false;
-        state.isError = false;
+      .addCase(getAllCards.fulfilled, (state, action) => {
+        console.log('getAllCards', action.payload);
         state.isSuccess = true;
-        state.cards = action.payload;
+        state.isLoading = false;
+        state.cards = action.payload.data;
       })
-      .addCase(getCardsForCurrentUser.rejected, (state, { payload }) => {
+      .addCase(getAllCards.rejected, (state, { payload }) => {
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
@@ -177,6 +176,53 @@ const cardSlice = createSlice({
       .addCase(updateCardById.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
+      })
+      .addCase(deleteCardById.pending, (state) => {
+        state.isLoading = true;
+        state.isError = false;
+        state.isSuccess = false;
+      })
+      .addCase(deleteCardById.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.cards = state.cards.filter((card) => card._id !== action.payload);
+      })
+      .addCase(deleteCardById.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+      })
+      .addCase(getCardDetail.pending, (state) => {
+        state.isLoading = true;
+        state.isError = false;
+        state.isSuccess = false;
+      })
+      .addCase(getCardDetail.fulfilled, (state, action) => {
+        console.log('getCardDetail', action.payload.data);
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.CardDetail = action.payload.data;
+      })
+      .addCase(getCardDetail.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      .addCase(getCardByIdAction.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getCardByIdAction.fulfilled, (state, action) => {
+        console.log('getCardById', action.payload.data);
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.cards = action.payload.data;
+      })
+      .addCase(getCardByIdAction.rejected, (state, { payload }) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = payload;
       });
   },
 });

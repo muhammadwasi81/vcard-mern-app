@@ -3,46 +3,42 @@ import axios from 'axios';
 const API_URL = '/api/cards/';
 
 // Create a new card
-const createCard = async (cardData, token) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
+const createCard = async (cardData) => {
   try {
-    const response = await axios.post(API_URL, cardData, config);
+    const response = await axios.post(API_URL, cardData);
     return response.data;
   } catch (err) {
     console.log(err.message);
+    throw new Error(err.message);
+  }
+};
+
+export const getCardById = async (id) => {
+  try {
+    const response = await axios.get(API_URL + id);
+    return response.data;
+  } catch (err) {
+    console.log(err.message);
+    throw new Error(err.message);
   }
 };
 
 // Get all cards
-const getAllCards = async (token) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
+const getAllCardService = async () => {
   try {
-    const response = await axios.get(API_URL, config);
+    const response = await axios.get(API_URL);
     return response.data;
   } catch (err) {
     console.log(err, { cause: err });
+    throw new Error(err.message);
   }
 };
 
 // Get a card by id
-const getCardsForCurrentUser = async (id, token) => {
-  console.log(id, 'id in service');
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
+const getCardDetailService = async (payload) => {
   try {
-    const response = await axios.get(API_URL + id, config);
-    console.log(response.data, 'getCardById');
+    const response = await axios.get(API_URL + payload);
+    console.log(response.data, 'getCardDetailService');
     return response.data;
   } catch (err) {
     console.log(err);
@@ -50,16 +46,10 @@ const getCardsForCurrentUser = async (id, token) => {
 };
 
 // Update a card by id
-const updateCardById = async (id, cardData, token) => {
+const updateCardById = async (id, cardData) => {
   console.log(id, 'id in service');
-  console.log(cardData, 'cardData in service');
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
   try {
-    const response = await axios.put(API_URL + id, cardData, config);
+    const response = await axios.put(API_URL + id, cardData);
     console.log(response.data, 'update service');
     return response.data;
   } catch (err) {
@@ -68,15 +58,10 @@ const updateCardById = async (id, cardData, token) => {
 };
 
 // Delete a card by id
-const deleteCardById = async (id, token) => {
+const deleteCardById = async (id) => {
   console.log(id, 'id in service');
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
   try {
-    const response = await axios.delete(API_URL + id, config);
+    const response = await axios.delete(API_URL + id);
     console.log(response.data, 'delete service');
     return response.data;
   } catch (err) {
@@ -86,10 +71,11 @@ const deleteCardById = async (id, token) => {
 
 const cardService = {
   createCard,
-  getAllCards,
-  getCardsForCurrentUser,
+  getAllCardService,
+  getCardDetailService,
   updateCardById,
   deleteCardById,
+  getCardById,
 };
 
 export default cardService;

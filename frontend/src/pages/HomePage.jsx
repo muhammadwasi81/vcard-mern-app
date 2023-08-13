@@ -1,51 +1,48 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import GoalForm from '../components/GoalForm';
-import GoalItem from '../components/GoalItem';
 import Spinner from '../components/Spinner';
-import { getCardsForCurrentUser, reset } from '../features/cards/cardSlice';
+import CardForm from '../components/CardForm';
+import UpdateCardInfo from '../components/UpdateCardInfo';
+import { getCardByIdAction, reset } from '../features/cards/cardSlice';
+import { toast } from 'react-toastify';
 
 function Dashboard() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const { user } = useSelector((state) => state.auth);
+  console.log(user, 'user in home page');
   const { cards, isLoading, isError, message } = useSelector(
     (state) => state.cards
   );
-  console.log('singleUser data', cards);
+  console.log(cards, 'card');
+
   useEffect(() => {
     if (isError) {
       console.log(message);
+      toast.error(message);
     }
-
     if (!user) {
-      navigate('/');
+      navigate('/login');
     }
-
     return () => {
       dispatch(reset());
     };
   }, [user, navigate, isError, message, dispatch]);
 
   useEffect(() => {
-    dispatch(getCardsForCurrentUser(user?._id));
+    user && dispatch(getCardByIdAction(user?._id));
   }, []);
-
   if (isLoading) {
     return <Spinner />;
   }
   return (
     <>
-      <section className="heading">
-        <h1>Welcome {user && user.name}</h1>
-        <p>vCard Dashboard</p>
-      </section>
-      <GoalForm />
+      <CardForm />
       <section className="goals">
         {cards?.map((card) => (
-          <GoalItem key={card._id} user={card} />
+          <UpdateCardInfo key={card._id} user={card} />
         ))}
       </section>
     </>

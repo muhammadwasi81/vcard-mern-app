@@ -1,17 +1,17 @@
-import { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { register, reset } from "../features/auth/authSlice";
-import Spinner from "../components/Spinner";
-import "../index.css";
+import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { register, reset } from '../features/auth/authSlice';
+import Spinner from '../components/Spinner';
+import '../index.css';
 
 function Register() {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    password2: "",
+    name: '',
+    email: '',
+    password: '',
+    password2: '',
   });
 
   const { name, email, password, password2 } = formData;
@@ -29,7 +29,7 @@ function Register() {
     }
 
     if (isSuccess || user) {
-      navigate("/");
+      navigate('/');
     }
 
     dispatch(reset());
@@ -46,11 +46,11 @@ function Register() {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    if (entries.some((entry) => entry === "")) {
-      return toast.error("Please fill in all fields");
+    if (entries.some((entry) => entry === '')) {
+      return toast.error('Please fill in all fields');
     }
     if (password !== password2) {
-      toast.error("Passwords do not match");
+      toast.error('Passwords do not match');
     } else {
       const userData = {
         name,
@@ -58,7 +58,9 @@ function Register() {
         password,
       };
 
-      dispatch(register(userData));
+      dispatch(register(userData)).then(() => {
+        toast.success('User registered successfully');
+      });
     }
   };
 
@@ -125,7 +127,7 @@ function Register() {
               />
             </div>
             <span>
-              Already have an account?{" "}
+              Already have an account?{' '}
               <Link to="/" className="text-danger">
                 Login
               </Link>
