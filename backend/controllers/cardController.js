@@ -37,32 +37,19 @@ const getCardsForCurrentUser = asyncHandler(async (req, res) => {
 });
 
 const getCardsByUserId = asyncHandler(async (req, res) => {
+  console.log('triggered');
   try {
-    const { userId } = req.params;
-    console.log(userId, 'userId');
-
-    // Find cards based on the user's ID
-    const cards = await Card.find({ user: userId });
-    console.log(cards, 'getCardsByUserId');
-
-    // Check if any cards were found
-    if (!cards || cards.length === 0) {
-      return res
-        .status(404)
-        .json({ message: 'Cards not found', status: false });
+    const card = await Card.find({ user: req.params.userId });
+    console.log(card, 'getCardsByUserId');
+    if (!card) {
+      return res.status(404).json({ msg: 'Card not found for this user' });
     }
-
-    // Send the retrieved cards as a response
-    return res.status(200).json({
-      message: 'Cards retrieved successfully',
-      data: cards,
-      status: true,
-    });
+    res
+      .status(200)
+      .json({ message: 'Card retrived successfully', card, status: false });
   } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .json({ message: 'Internal Server Error', status: false });
+    console.error(error.message);
+    res.status(500).send({ message: 'Server Error', status: false });
   }
 });
 
@@ -70,6 +57,8 @@ const getCardsByUserId = asyncHandler(async (req, res) => {
 // @route   POST /api/cards
 // @access  Public
 const createCard = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  console.log(userId, 'userId');
   const {
     image,
     website,
@@ -85,6 +74,7 @@ const createCard = asyncHandler(async (req, res) => {
   } = req.body;
 
   const card = await Card.create({
+    user: userId,
     image,
     website,
     notes,

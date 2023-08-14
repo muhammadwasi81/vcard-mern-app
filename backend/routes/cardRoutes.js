@@ -10,11 +10,11 @@ const {
 } = require('../controllers/cardController');
 const { protect } = require('../middleware/authMiddleware');
 
-router.get('/', getCards);
+router.get('/getAllCards', protect, getCards);
 router.get('/:cardName', getCardsForCurrentUser);
-router.post('/', createCard);
-router.get('/:userId', getCardsByUserId);
-router.put('/:id', updateCard);
-router.delete('/:id', deleteCard);
+router.post('/createCard', protect, createCard);
+router.get('/card/:userId', protect, getCardsByUserId);
+router.put('/:id', protect, updateCard);
+router.delete('/:id', protect, deleteCard);
 
 module.exports = router;
