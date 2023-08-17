@@ -179,9 +179,17 @@ function CardForm({ editForm }) {
     console.log(payload, 'payload');
     if (editForm) {
       console.log('editForm if block****', editForm);
-      return dispatch(updateCardByIdAction({ id: editForm._id, payload }));
+      return dispatch(updateCardByIdAction({ id: editForm._id, payload })).then(
+        (res) => {
+          res.type === 'cards/update/fulfilled' &&
+            toast.success('Card updated successfully');
+        }
+      );
     } else {
-      dispatch(createCard(payload));
+      dispatch(createCard(payload)).then((res) => {
+        res.type === 'cards/create/fulfilled' &&
+          toast.success('Card created successfully');
+      });
     }
     // .then(() => {
     // const cardSlug = slugify(cardName); // Convert cardName to a slug
@@ -363,7 +371,8 @@ function CardForm({ editForm }) {
                     name="socialType"
                     id="socialType"
                     placeholder="social type"
-                    className="form-control input__field w-25"
+                    className="form-control input__field"
+                    style={{ maxWidth: '25%' }}
                     value={link.type}
                     onChange={(e) => setSocialType(e.target.value, index)}
                   />
@@ -403,6 +412,7 @@ function CardForm({ editForm }) {
                     name="positionTitle"
                     id="positionTitle"
                     value={occupation.positionTitle}
+                    style={{ maxWidth: '25%' }}
                     placeholder="position"
                     className="form-control input__field w-25"
                     onChange={(e) => setPositionTitle(e.target.value, index)}

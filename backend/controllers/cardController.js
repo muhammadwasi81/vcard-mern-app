@@ -91,7 +91,7 @@ const createCard = asyncHandler(async (req, res) => {
   });
   res
     .status(201)
-    .json({ message: 'Card Created Successfully', card, status: true });
+    .json({ message: 'Card Created Successfully', data: card, status: true });
 });
 
 // @desc    Update a card

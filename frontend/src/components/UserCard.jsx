@@ -2,6 +2,7 @@ import QRCode from 'qrcode.react';
 import { useDispatch } from 'react-redux';
 import { deleteCardById, removeCards } from '../features/cards/cardSlice';
 import { toast } from 'react-toastify';
+import { AiOutlineDownload, AiOutlineEdit } from 'react-icons/ai';
 
 const UserCard = ({ user, handleDownload, setEditMode }) => {
   console.log(user, 'user in usercard');
@@ -57,24 +58,28 @@ const UserCard = ({ user, handleDownload, setEditMode }) => {
         className="m-auto"
         style={{ width: '50px', height: '50px', borderRadius: '50%' }}
       />
-      <QRCode
-        size={256}
-        className="m-auto w-75 h-75"
-        value={`https://vcard-app.onrender.com/${user.cardName}`}
-      />
+      <div style={{ height: '50%' }}>
+        <QRCode
+          size={256}
+          className="m-auto w-75 h-75"
+          value={`https://vcard-app.onrender.com/${user.cardName}`}
+        />
+      </div>
       <button
-        className="btn btn-primary w-50 login__btn"
+        className="btn btn-primary w-75 login__btn"
         onClick={() => handleDownload(user)}
       >
+        <AiOutlineDownload style={{ fontSize: '30px' }} />
         Download vCard
       </button>
       <button onClick={handleDelete} className="close">
         X
       </button>
       <button
-        className="btn btn-danger mt-2 w-25 m-auto"
+        className="btn btn-danger mt-2 m-auto"
         onClick={() => setEditMode(true)}
       >
+        <AiOutlineEdit style={{ fontSize: '30px' }} />
         Edit
       </button>
     </div>

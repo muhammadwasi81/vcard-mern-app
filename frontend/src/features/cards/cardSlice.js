@@ -155,10 +155,11 @@ const cardSlice = createSlice({
         state.isSuccess = false;
       })
       .addCase(createCard.fulfilled, (state, action) => {
+        console.log('createCard.fulfilled', action.payload.data);
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
-        state.cards.push(action.payload);
+        state.cards.push(action.payload.data);
       })
       .addCase(createCard.rejected, (state, action) => {
         state.isLoading = false;
@@ -171,12 +172,12 @@ const cardSlice = createSlice({
         state.isSuccess = false;
       })
       .addCase(updateCardByIdAction.fulfilled, (state, action) => {
-        console.log('updateCardByIdAction', action.payload);
+        console.log('updateCardByIdAction', action.payload.data);
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
         state.cards = state.cards.map((card) =>
-          card._id === action.payload._id ? action.payload : card
+          card._id === action.payload.data._id ? action.payload.data : card
         );
       })
       .addCase(updateCardByIdAction.rejected, (state, action) => {
