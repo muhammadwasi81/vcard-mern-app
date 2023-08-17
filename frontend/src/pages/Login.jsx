@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { login, refreshToken, reset } from '../features/auth/authSlice';
+import { login, reset } from '../features/auth/authSlice';
 import Spinner from '../components/Spinner';
 import '../index.css';
 import { AiFillEye } from 'react-icons/ai';
@@ -31,7 +31,6 @@ function Login() {
     }
 
     if (isSuccess || user) {
-      dispatch(refreshToken());
       navigate('/');
     }
 
@@ -47,12 +46,17 @@ function Login() {
 
   const onSubmit = (e) => {
     e.preventDefault();
+    if (!email || !password) return toast.error('Please fill all the fields');
     const userData = {
       email,
       password,
     };
-    dispatch(login(userData)).then(() => {
-      toast.success('User Logged in successfully');
+    dispatch(login(userData)).then((res) => {
+      if (res.meta.requestStatus === 'fulfilled') {
+        toast.success('User Logged in successfully');
+      } else {
+        toast.error('Sorry, Something went wrong');
+      }
     });
   };
 

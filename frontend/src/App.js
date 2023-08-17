@@ -23,14 +23,9 @@ function App() {
         <div className="container">
           <Header />
           <Routes>
-            <Route
-              path="/"
-              element={
-                user ? <Navigate to={`/${user.name}`} replace /> : <Login />
-              }
-            />
+            <Route path="/login" element={<Login />} />
             <Route path="/vcard/:id" element={<VCard />} />
-            <Route path="/:name" element={<Dashboard />} />
+            <Route path="/" element={<Dashboard />} />
             <Route path="/register" element={<Register />} />
             <Route path="/card/:name" element={<CardDetail />} />
             <Route path="*" element={<NotFound />} />

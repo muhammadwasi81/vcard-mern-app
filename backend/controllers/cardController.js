@@ -44,9 +44,11 @@ const getCardsByUserId = asyncHandler(async (req, res) => {
     if (!card) {
       return res.status(404).json({ msg: 'Card not found for this user' });
     }
-    res
-      .status(200)
-      .json({ message: 'Card retrived successfully', card, status: false });
+    res.status(200).json({
+      message: 'Card retrived successfully',
+      data: card,
+      status: false,
+    });
   } catch (error) {
     console.error(error.message);
     res.status(500).send({ message: 'Server Error', status: false });
@@ -94,7 +96,7 @@ const createCard = asyncHandler(async (req, res) => {
 
 // @desc    Update a card
 // @route   PUT /api/cards/:id
-// @access  Private
+// @access  Public
 const updateCard = asyncHandler(async (req, res) => {
   const {
     image,

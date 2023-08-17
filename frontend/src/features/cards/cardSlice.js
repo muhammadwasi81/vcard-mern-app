@@ -39,7 +39,9 @@ export const getCardByIdAction = createAsyncThunk(
   'cards/getCardById',
   async (payload, thunkAPI) => {
     try {
-      return await cardService.getCardById(payload);
+      const response = cardService.getCardById(payload);
+      console.log('response in action=>', response);
+      return response;
     } catch (error) {
       const message =
         (error.response &&

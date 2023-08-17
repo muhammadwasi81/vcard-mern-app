@@ -41,9 +41,8 @@ function Dashboard() {
     <>
       <CardForm />
       <section className="goals">
-        {cards?.map((card) => (
-          <UpdateCardInfo key={card._id} user={card} />
-        ))}
+        {cards &&
+          cards?.map((card) => <UpdateCardInfo key={card._id} user={card} />)}
       </section>
     </>
   );

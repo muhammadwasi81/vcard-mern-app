@@ -14,7 +14,7 @@ router.get('/getAllCards', protect, getCards);
 router.get('/:cardName', getCardsForCurrentUser);
 router.post('/createCard', protect, createCard);
 router.get('/card/:userId', protect, getCardsByUserId);
-router.put('/:id', protect, updateCard);
-router.delete('/:id', protect, deleteCard);
+router.put('/updateCard/:id', protect, updateCard);
+router.delete('/deleteCard/:id', protect, deleteCard);
 
 module.exports = router;

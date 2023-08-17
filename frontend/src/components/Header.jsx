@@ -13,13 +13,13 @@ function Header() {
   const onLogout = () => {
     dispatch(logout());
     dispatch(reset());
-    navigate('/');
+    navigate('/login');
     toast.success('User Logged out successfully');
   };
 
   return (
     <>
-      {location.pathname !== '/' && location.pathname !== '/register' && (
+      {location.pathname !== '/register' && location.pathname !== '/login' && (
         <header className="header py-2">
           <div className="container d-flex justify-content-between align-items-center">
             <div className="logo">
@@ -47,7 +47,7 @@ function Header() {
                       <FaSignInAlt /> Login
                     </Link>
                   </li>
-                  <li className="mx-2">
+                  <li className="mx-2" style={{ marginTop: '20px' }}>
                     <Link to="/register" className="btn btn-secondary">
                       <FaUser /> Register
                     </Link>

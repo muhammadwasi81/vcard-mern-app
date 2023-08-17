@@ -1,11 +1,10 @@
 import axios from 'axios';
-
-const API_URL = '/api/cards/';
+import apiGlobal from '../../utils/apiGlobal';
 
 // Create a new card
 const createCard = async (cardData) => {
   try {
-    const response = await axios.post(API_URL, cardData);
+    const response = await apiGlobal.post('createCard', cardData);
     return response.data;
   } catch (err) {
     console.log(err.message);
@@ -15,7 +14,8 @@ const createCard = async (cardData) => {
 
 export const getCardById = async (id) => {
   try {
-    const response = await axios.get(API_URL + id);
+    const response = await apiGlobal.get(`card/${id}`);
+    console.log(response.data, 'getCardById service');
     return response.data;
   } catch (err) {
     console.log(err.message);
@@ -26,7 +26,7 @@ export const getCardById = async (id) => {
 // Get all cards
 const getAllCardService = async () => {
   try {
-    const response = await axios.get(API_URL);
+    const response = await apiGlobal.get('getAllCards');
     return response.data;
   } catch (err) {
     console.log(err, { cause: err });
@@ -37,7 +37,7 @@ const getAllCardService = async () => {
 // Get a card by id
 const getCardDetailService = async (payload) => {
   try {
-    const response = await axios.get(API_URL + payload);
+    const response = await apiGlobal.get(payload);
     console.log(response.data, 'getCardDetailService');
     return response.data;
   } catch (err) {
@@ -47,9 +47,9 @@ const getCardDetailService = async (payload) => {
 
 // Update a card by id
 const updateCardById = async (id, cardData) => {
-  console.log(id, 'id in service');
+  console.log(id, 'updateCardById service');
   try {
-    const response = await axios.put(API_URL + id, cardData);
+    const response = await apiGlobal.put(`updateCard/${id}`, cardData);
     console.log(response.data, 'update service');
     return response.data;
   } catch (err) {
@@ -61,7 +61,7 @@ const updateCardById = async (id, cardData) => {
 const deleteCardById = async (id) => {
   console.log(id, 'id in service');
   try {
-    const response = await axios.delete(API_URL + id);
+    const response = await apiGlobal.delete(`deleteCard/${id}`);
     console.log(response.data, 'delete service');
     return response.data;
   } catch (err) {

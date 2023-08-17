@@ -14,7 +14,14 @@ function UpdateCardInfo({ user }) {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setUpdateUser((prevUser) => ({ ...prevUser, [name]: value }));
+    if (name === 'emailInput') {
+      setUpdateUser((prev) => ({
+        ...prev,
+        emails: [{ emailInput: value }],
+      }));
+    } else {
+      setUpdateUser((prevUser) => ({ ...prevUser, [name]: value }));
+    }
   };
 
   const handleSubmit = (e) => {
@@ -24,16 +31,17 @@ function UpdateCardInfo({ user }) {
     }
     const payload = {
       id: updatedUser._id,
-      name: updatedUser.name,
-      email: updatedUser.email,
-      telephone: updatedUser.telephone,
-      birthday: updatedUser.birthday,
-      website: updatedUser.website,
-      snapchat: updatedUser.snapchat,
-      instagram: updatedUser.instagram,
-      linkedin: updatedUser.linkedin,
-      image: updatedUser.image,
+      firstName: updatedUser.firstName,
+      lastName: updatedUser.lastName,
+      emails: updatedUser.emails,
+      address: updatedUser.address,
+      cardName: updatedUser.cardName,
+      notes: updatedUser.notes,
+      phoneNumbers: updatedUser.phoneNumbers,
+      socialLinks: updatedUser.socialLinks,
+      occupations: updatedUser.occupations,
     };
+    console.log(payload, 'payload');
     dispatch(updateCardById({ payload }));
     setEditMode(false);
   };
@@ -45,64 +53,64 @@ function UpdateCardInfo({ user }) {
           <div>
             <input
               type="text"
-              name="name"
-              value={updatedUser.name}
+              name="firstName"
+              className="form-control input__field"
+              value={updatedUser.firstName}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div>
+            <input
+              type="text"
+              name="lastName"
+              className="form-control input__field"
+              value={updatedUser.lastName}
               onChange={handleInputChange}
             />
           </div>
           <div>
             <input
               type="email"
-              name="email"
-              value={updatedUser.email}
+              name="emailInput" // Changed name
+              className="form-control input__field"
+              value={updatedUser.emails[0].emailInput} // Changed value
+              onChange={handleInputChange}
+            />
+          </div>
+          <div>
+            <input
+              type="number"
+              name="phoneNumbers"
+              className="form-control input__field"
+              value={updatedUser.phoneNumbers[0]?.number} // Changed value
               onChange={handleInputChange}
             />
           </div>
           <div>
             <input
               type="text"
-              name="telephone"
-              value={updatedUser.telephone}
+              name="socialLinks"
+              id="socialLinks"
+              className="form-control input__field"
+              value={
+                updatedUser?.socialLinks?.find(
+                  (sl) =>
+                    sl?.type === 'insta' ||
+                    sl?.type === 'instagram' ||
+                    sl?.type === 'facebook' ||
+                    sl?.type === 'snapchat'
+                )?.link
+              }
               onChange={handleInputChange}
             />
           </div>
-          <div>
-            <input
-              type="url"
-              name="website"
-              value={updatedUser.website}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div>
-            <input
-              type="text"
-              name="linkedin"
-              value={updatedUser.linkedin}
-              onChange={handleInputChange}
-            />
-          </div>
+          {/* Occupation (assuming it's always the first one) */}
           <div>
             <input
               type="text"
-              name="instagram"
-              value={updatedUser.instagram}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div>
-            <input
-              type="text"
-              name="snapchat"
-              value={updatedUser.snapchat}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div>
-            <input
-              type="date"
-              name="birthday"
-              value={moment(updatedUser.birthday).format('YYYY-MM-DD')}
+              name="occupations"
+              className="form-control input__field"
+              value={updatedUser.occupations[0]?.organizationName} // Changed value
               onChange={handleInputChange}
             />
           </div>
@@ -112,7 +120,7 @@ function UpdateCardInfo({ user }) {
             className="m-auto"
             style={{ width: ' 50px', height: '50px', borderRadius: '50%' }}
           />
-          <button className="btn btn-primary" type="submit">
+          <button className="btn btn-primary w-25" type="submit">
             Update
           </button>
           <button
