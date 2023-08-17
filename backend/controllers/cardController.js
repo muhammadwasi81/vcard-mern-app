@@ -111,26 +111,26 @@ const updateCard = asyncHandler(async (req, res) => {
     address,
     cardName,
   } = req.body;
-
+  console.log(req.body, 'req.body');
   const card = await Card.findById(req.params.id);
   if (card) {
-    card.image = image;
-    card.website = website;
-    card.notes = notes;
-    card.occupations = occupations;
-    card.phoneNumbers = phoneNumbers;
-    card.socialLinks = socialLinks;
-    card.emails = emails;
-    card.firstName = firstName;
-    card.lastName = lastName;
-    card.address = address;
-    card.cardName = cardName;
+    card.image = image || card.image;
+    card.website = website || card.website;
+    card.notes = notes || card.notes;
+    card.occupations = occupations || card.occupations;
+    card.phoneNumbers = phoneNumbers || card.phoneNumbers;
+    card.socialLinks = socialLinks || card.socialLinks;
+    card.emails = emails || card.emails;
+    card.firstName = firstName || card.firstName;
+    card.lastName = lastName || card.lastName;
+    card.address = address || card.address;
+    card.cardName = cardName || card.cardName;
 
     const updatedCard = await card.save();
     console.log(updatedCard, 'updateCard');
     res.status(200).json({
       message: 'Card Updated Successfully',
-      updatedCard,
+      data: updatedCard,
       status: true,
     });
   } else {

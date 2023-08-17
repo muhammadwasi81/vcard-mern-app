@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { createCard } from '../features/cards/cardSlice';
+import { createCard, updateCardByIdAction } from '../features/cards/cardSlice';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import Spinner from './Spinner';
@@ -9,7 +9,7 @@ import CustomLabel from './CustomLabel';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-function CardForm() {
+function CardForm({ editForm }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isSuccess, isLoading, message, isError } = useSelector(
@@ -41,6 +41,23 @@ function CardForm() {
       toast.error(message);
     }
   }, [isSuccess, dispatch, isError, message]);
+
+  useEffect(() => {
+    console.log(editForm, 'editForm useEffect');
+    if (editForm) {
+      setCardName(editForm.cardName);
+      setFirstName(editForm.firstName);
+      setLastName(editForm.lastName);
+      setAddress(editForm.address);
+      setNotes(editForm.notes);
+      setImage(editForm.image);
+      setWebsite(editForm.website);
+      setPhoneNumbers(editForm.phoneNumbers);
+      setSocialLinks(editForm.socialLinks);
+      setOccupations(editForm.occupations);
+      setEmails(editForm.emails);
+    }
+  }, [editForm]);
 
   const setSocialType = (value, index) => {
     const newSocialLinks = [...socialLinks];
@@ -160,10 +177,16 @@ function CardForm() {
     e.preventDefault();
     const payload = createPayload();
     console.log(payload, 'payload');
-    dispatch(createCard(payload)).then(() => {
-      // const cardSlug = slugify(cardName); // Convert cardName to a slug
-      navigate(`/card/${cardName}`);
-    });
+    if (editForm) {
+      console.log('editForm if block****', editForm);
+      return dispatch(updateCardByIdAction({ id: editForm._id, payload }));
+    } else {
+      dispatch(createCard(payload));
+    }
+    // .then(() => {
+    // const cardSlug = slugify(cardName); // Convert cardName to a slug
+    // navigate(`/card/${cardName}`);
+    // });
   };
 
   const uploadFileHandler = async (e) => {
@@ -477,7 +500,7 @@ function CardForm() {
             type="submit"
             disabled={isLoading}
           >
-            {isLoading ? 'Loading...' : 'Create'}
+            {editForm ? 'Update' : 'Create'}
           </button>
         </div>
       </form>

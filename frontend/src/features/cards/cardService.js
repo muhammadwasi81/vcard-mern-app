@@ -46,10 +46,10 @@ const getCardDetailService = async (payload) => {
 };
 
 // Update a card by id
-const updateCardById = async (id, cardData) => {
-  console.log(id, 'updateCardById service');
+const updateCardByIdService = async (id, payload) => {
+  console.log(payload, id, 'payload in service');
   try {
-    const response = await apiGlobal.put(`updateCard/${id}`, cardData);
+    const response = await apiGlobal.put(`updateCard/${id}`, payload);
     console.log(response.data, 'update service');
     return response.data;
   } catch (err) {
@@ -73,7 +73,7 @@ const cardService = {
   createCard,
   getAllCardService,
   getCardDetailService,
-  updateCardById,
+  updateCardByIdService,
   deleteCardById,
   getCardById,
 };

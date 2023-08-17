@@ -4,6 +4,7 @@ import { deleteCardById, removeCards } from '../features/cards/cardSlice';
 import { toast } from 'react-toastify';
 
 const UserCard = ({ user, handleDownload, setEditMode }) => {
+  console.log(user, 'user in usercard');
   const dispatch = useDispatch();
   const handleDelete = () => {
     dispatch(removeCards(user?._id));

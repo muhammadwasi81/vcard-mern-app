@@ -89,11 +89,14 @@ export const deleteCardById = createAsyncThunk(
   }
 );
 
-export const updateCardById = createAsyncThunk(
+export const updateCardByIdAction = createAsyncThunk(
   'cards/update',
-  async ({ payload }, thunkAPI) => {
+  async ({ id, payload }, thunkAPI) => {
+    console.log('payload', payload);
     try {
-      return await cardService.updateCardById(payload.id);
+      const response = await cardService.updateCardByIdService(id, payload);
+      console.log('response in action=>', response);
+      return response;
     } catch (error) {
       const message =
         (error.response &&
@@ -162,12 +165,13 @@ const cardSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
       })
-      .addCase(updateCardById.pending, (state) => {
+      .addCase(updateCardByIdAction.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
         state.isSuccess = false;
       })
-      .addCase(updateCardById.fulfilled, (state, action) => {
+      .addCase(updateCardByIdAction.fulfilled, (state, action) => {
+        console.log('updateCardByIdAction', action.payload);
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
@@ -175,7 +179,7 @@ const cardSlice = createSlice({
           card._id === action.payload._id ? action.payload : card
         );
       })
-      .addCase(updateCardById.rejected, (state, action) => {
+      .addCase(updateCardByIdAction.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
       })

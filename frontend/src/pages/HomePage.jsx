@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import Spinner from '../components/Spinner';
@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 function Dashboard() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [editForm, setEditForm] = useState(null);
 
   const { user } = useSelector((state) => state.auth);
   console.log(user, 'user in home page');
@@ -34,15 +35,26 @@ function Dashboard() {
   useEffect(() => {
     user && dispatch(getCardByIdAction(user?._id));
   }, []);
+
+  const handleEdit = (cardData) => {
+    setEditForm(cardData);
+    console.log('edit in index file', cardData);
+  };
   if (isLoading) {
     return <Spinner />;
   }
   return (
     <>
-      <CardForm />
+      <CardForm editForm={editForm} />
       <section className="goals">
         {cards &&
-          cards?.map((card) => <UpdateCardInfo key={card._id} user={card} />)}
+          cards?.map((card) => (
+            <UpdateCardInfo
+              key={card._id}
+              cardData={card}
+              setCard={handleEdit}
+            />
+          ))}
       </section>
     </>
   );
